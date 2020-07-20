@@ -1,0 +1,4 @@
+api-docs/**/*
+node_modules/**/*
+test-build/**/*
+*.log

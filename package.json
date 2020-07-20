@@ -1,0 +1,39 @@
+{
+  "name": "autumn-electron-ipc",
+  "version": "1.0.0",
+  "description": "A typed Electron IPC wrapper",
+  "main": "dist",
+  "module": "dist",
+  "author": "Handiwork",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "build": "tsc --build lib.tsconfig.json",
+    "build:test": "webpack",
+    "watch": "tsc --build lib.tsconfig.json --watch",
+    "watch:test": "webpack --watch",
+    "test": "electron ./test-build/main",
+    "doc": "typedoc lib --out api-docs --theme minimal"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.10.5",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/preset-env": "^7.10.4",
+    "@types/node": "~12",
+    "babel-loader": "^8.1.0",
+    "electron": "^9.1.0",
+    "html-webpack-plugin": "^4.3.0",
+    "ts-loader": "^8.0.1",
+    "typedoc": "^0.17.8",
+    "typescript": "^3.9.7",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12",
+    "webpack-merge": "^5.0.9"
+  },
+  "peerDependencies": {
+    "electron": ">=8.0.0"
+  },
+  "files": [
+    "dist"
+  ]
+}
