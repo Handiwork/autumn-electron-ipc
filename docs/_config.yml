@@ -1,2 +1,2 @@
 theme: jekyll-theme-slate
-include: ['api/**/_*.html']
+include: ["**/api/**/_*.html"]
