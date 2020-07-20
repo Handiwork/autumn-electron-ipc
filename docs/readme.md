@@ -29,5 +29,6 @@ export const r2mApi = createR2MApi({
 ```
 
 ## APIs
+[Docs Here](./api)
 
 

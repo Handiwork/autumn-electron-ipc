@@ -7,13 +7,17 @@
   "author": "Handiwork",
   "license": "MIT",
   "private": false,
+  "repository": {
+    "url": "https://github.com/Handiwork/autumn-electron-ipc"
+  },
+  "homepage": "https://handiwork.github.io/autumn-electron-ipc",
   "scripts": {
     "build": "tsc --build lib.tsconfig.json",
     "build:test": "webpack",
     "watch": "tsc --build lib.tsconfig.json --watch",
     "watch:test": "webpack --watch",
     "test": "electron ./test-build/main",
-    "doc": "typedoc lib --out api-docs --theme minimal"
+    "doc": "typedoc lib --out docs/api --theme minimal"
   },
   "devDependencies": {
     "@babel/core": "^7.10.5",
