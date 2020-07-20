@@ -2,6 +2,11 @@
   "name": "autumn-electron-ipc",
   "version": "1.0.0",
   "description": "A typed Electron IPC wrapper",
+  "keywords": [
+    "autumn",
+    "electron",
+    "ipc"
+  ],
   "main": "dist",
   "module": "dist",
   "author": "Handiwork",
@@ -11,6 +16,10 @@
     "url": "https://github.com/Handiwork/autumn-electron-ipc"
   },
   "homepage": "https://handiwork.github.io/autumn-electron-ipc",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc --build lib.tsconfig.json",
     "build:test": "webpack",
