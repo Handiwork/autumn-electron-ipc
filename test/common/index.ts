@@ -1,13 +1,13 @@
 import { createM2RApi, createR2MApi } from '../../lib';
 
-export const m2rApi = createM2RApi({
+export const m2rApi = createM2RApi("m2r-channel", {
     hello: {
         input: ["array", "string"],
         output: "string"
     }
 })
 
-export const r2mApi = createR2MApi({
+export const r2mApi = createR2MApi("r2m-chennel", {
     hello: {
         input: ["optional", "string"],
         output: "string"

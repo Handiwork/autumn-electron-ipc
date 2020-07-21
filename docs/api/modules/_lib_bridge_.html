@@ -2722,9 +2722,6 @@ img {
 </header>
 <nav class="tsd-navigation secondary">
 	<ul>
-		<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-			<a href="_lib_bridge_.html#channel_name" class="tsd-kind-icon">CHANNEL_<wbr>NAME</a>
-		</li>
 		<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
 			<a href="_lib_bridge_.html#checkmanifest" class="tsd-kind-icon">check<wbr>Manifest</a>
 		</li>
@@ -2742,12 +2739,6 @@ img {
 			<h2>Index</h2>
 			<section class="tsd-panel tsd-index-panel">
 				<div class="tsd-index-content">
-					<section class="tsd-index-section tsd-is-not-exported">
-						<h3>Variables</h3>
-						<ul class="tsd-index-list">
-							<li class="tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported"><a href="_lib_bridge_.html#channel_name" class="tsd-kind-icon">CHANNEL_<wbr>NAME</a></li>
-						</ul>
-					</section>
 					<section class="tsd-index-section ">
 						<h3>Functions</h3>
 						<ul class="tsd-index-list">
@@ -2757,19 +2748,6 @@ img {
 						</ul>
 					</section>
 				</div>
-			</section>
-		</section>
-		<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
-			<h2>Variables</h2>
-			<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-				<a name="channel_name" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagConst">Const</span> CHANNEL_<wbr>NAME</h3>
-				<div class="tsd-signature tsd-kind-icon">CHANNEL_<wbr>NAME<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"ipc-basic-channel"</span><span class="tsd-signature-symbol"> = &quot;ipc-basic-channel&quot;</span></div>
-				<aside class="tsd-sources">
-					<ul>
-						<li>Defined in <a href="https://github.com/Handiwork/autumn-electron-ipc/blob/5408b1a/lib/bridge.ts#L12">lib/bridge.ts:12</a></li>
-					</ul>
-				</aside>
 			</section>
 		</section>
 		<section class="tsd-panel-group tsd-member-group ">
@@ -2784,7 +2762,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/Handiwork/autumn-electron-ipc/blob/5408b1a/lib/bridge.ts#L8">lib/bridge.ts:8</a></li>
+								<li>Defined in <a href="https://github.com/Handiwork/autumn-electron-ipc/blob/25fcec7/lib/bridge.ts#L8">lib/bridge.ts:8</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -2814,13 +2792,13 @@ img {
 				<a name="createm2rapi" class="tsd-anchor"></a>
 				<h3>create<wbr>M2RApi</h3>
 				<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
-					<li class="tsd-signature tsd-kind-icon">create<wbr>M2RApi&lt;T&gt;<span class="tsd-signature-symbol">(</span>manifest<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, channel<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>manifest<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">; </span>getClientFor<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">; </span>plugInRenderer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> }</span></li>
+					<li class="tsd-signature tsd-kind-icon">create<wbr>M2RApi&lt;T&gt;<span class="tsd-signature-symbol">(</span>channel<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, manifest<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>manifest<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">; </span>getClientFor<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">; </span>plugInRenderer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> }</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/Handiwork/autumn-electron-ipc/blob/5408b1a/lib/bridge.ts#L19">lib/bridge.ts:19</a></li>
+								<li>Defined in <a href="https://github.com/Handiwork/autumn-electron-ipc/blob/25fcec7/lib/bridge.ts#L18">lib/bridge.ts:18</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -2837,16 +2815,16 @@ img {
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>manifest: <span class="tsd-signature-type">T</span></h5>
+								<h5>channel: <span class="tsd-signature-type">string</span></h5>
 								<div class="tsd-comment tsd-typography">
-									<p>API manifest</p>
+									<p>the channel to use,
+									<strong>notice</strong>: <code>${channel}-${new Date().getTime()}</code> channels are used for api reply</p>
 								</div>
 							</li>
 							<li>
-								<h5><span class="tsd-flag ts-flagDefault value">Default value</span> channel: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = CHANNEL_NAME</span></h5>
+								<h5>manifest: <span class="tsd-signature-type">T</span></h5>
 								<div class="tsd-comment tsd-typography">
-									<p>the channel to use, default to &quot;ipc-basic-channel&quot;,
-									NOTICE:<code>${channel}-{new Date().getTime()}</code> channels are used for api reply</p>
+									<p>API manifest</p>
 								</div>
 							</li>
 						</ul>
@@ -2864,7 +2842,7 @@ img {
 									<li class="tsd-description">
 										<aside class="tsd-sources">
 											<ul>
-												<li>Defined in <a href="https://github.com/Handiwork/autumn-electron-ipc/blob/5408b1a/lib/bridge.ts#L36">lib/bridge.ts:36</a></li>
+												<li>Defined in <a href="https://github.com/Handiwork/autumn-electron-ipc/blob/25fcec7/lib/bridge.ts#L35">lib/bridge.ts:35</a></li>
 											</ul>
 										</aside>
 										<div class="tsd-comment tsd-typography">
@@ -2894,7 +2872,7 @@ img {
 									<li class="tsd-description">
 										<aside class="tsd-sources">
 											<ul>
-												<li>Defined in <a href="https://github.com/Handiwork/autumn-electron-ipc/blob/5408b1a/lib/bridge.ts#L26">lib/bridge.ts:26</a></li>
+												<li>Defined in <a href="https://github.com/Handiwork/autumn-electron-ipc/blob/25fcec7/lib/bridge.ts#L25">lib/bridge.ts:25</a></li>
 											</ul>
 										</aside>
 										<div class="tsd-comment tsd-typography">
@@ -2923,13 +2901,13 @@ img {
 				<a name="creater2mapi" class="tsd-anchor"></a>
 				<h3>create<wbr>R2MApi</h3>
 				<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
-					<li class="tsd-signature tsd-kind-icon">create<wbr>R2MApi&lt;T&gt;<span class="tsd-signature-symbol">(</span>manifest<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, channel<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>manifest<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">; </span>getClient<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">; </span>plugInMain<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> }</span></li>
+					<li class="tsd-signature tsd-kind-icon">create<wbr>R2MApi&lt;T&gt;<span class="tsd-signature-symbol">(</span>channel<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, manifest<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>manifest<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">; </span>getClient<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">; </span>plugInMain<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> }</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/Handiwork/autumn-electron-ipc/blob/5408b1a/lib/bridge.ts#L57">lib/bridge.ts:57</a></li>
+								<li>Defined in <a href="https://github.com/Handiwork/autumn-electron-ipc/blob/25fcec7/lib/bridge.ts#L56">lib/bridge.ts:56</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -2946,15 +2924,15 @@ img {
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>manifest: <span class="tsd-signature-type">T</span></h5>
+								<h5>channel: <span class="tsd-signature-type">string</span></h5>
 								<div class="tsd-comment tsd-typography">
-									<p>API manifest</p>
+									<p>the channel to use</p>
 								</div>
 							</li>
 							<li>
-								<h5><span class="tsd-flag ts-flagDefault value">Default value</span> channel: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = CHANNEL_NAME</span></h5>
+								<h5>manifest: <span class="tsd-signature-type">T</span></h5>
 								<div class="tsd-comment tsd-typography">
-									<p>the channel to use, default to &quot;ipc-basic-channel&quot;</p>
+									<p>API manifest</p>
 								</div>
 							</li>
 						</ul>
@@ -2972,7 +2950,7 @@ img {
 									<li class="tsd-description">
 										<aside class="tsd-sources">
 											<ul>
-												<li>Defined in <a href="https://github.com/Handiwork/autumn-electron-ipc/blob/5408b1a/lib/bridge.ts#L65">lib/bridge.ts:65</a></li>
+												<li>Defined in <a href="https://github.com/Handiwork/autumn-electron-ipc/blob/25fcec7/lib/bridge.ts#L64">lib/bridge.ts:64</a></li>
 											</ul>
 										</aside>
 										<h4 class="tsd-returns-title">Returns <a href="_lib_types_.html#api" class="tsd-signature-type">API</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -2988,7 +2966,7 @@ img {
 									<li class="tsd-description">
 										<aside class="tsd-sources">
 											<ul>
-												<li>Defined in <a href="https://github.com/Handiwork/autumn-electron-ipc/blob/5408b1a/lib/bridge.ts#L60">lib/bridge.ts:60</a></li>
+												<li>Defined in <a href="https://github.com/Handiwork/autumn-electron-ipc/blob/25fcec7/lib/bridge.ts#L59">lib/bridge.ts:59</a></li>
 											</ul>
 										</aside>
 										<h4 class="tsd-parameters-title">Parameters</h4>
@@ -3011,7 +2989,6 @@ img {
 				<h2>Legend</h2>
 				<div class="tsd-legend-group">
 					<ul class="tsd-legend">
-						<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
 						<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
 						<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
 						<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>

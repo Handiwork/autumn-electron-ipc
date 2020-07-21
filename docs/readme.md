@@ -1,6 +1,6 @@
 # Autumn Electron IPC
 
-This library is used to create well typed IPC API for [Electron](https://www.electronjs.org). In Typescript environment, this library confirms the consistency between callers and callees.
+This library is used to create well typed IPC API for [Electron](https://www.electronjs.org). Within a Typescript environment, this library confirms the consistency between callers and callees.
 
 ## Get Started
 
@@ -12,7 +12,7 @@ In this chapter, we will create an render-to-main API, which calls from renderer
 // in common file,
 // shared by both main process and renderer process
 
-export const r2mApi = createR2MApi({
+export const r2mApi = createR2MApi("r2m-channel",{
     hello: {
         input: ["optional", "string"],
         output: "string"
@@ -42,7 +42,7 @@ const manifest = checkManifest({
         output: "string"
     },
 })
-export r2mApi = createR2MApi(manifest,"my-special-channel")
+export r2mApi = createR2MApi("my-special-channel" , manifest)
 ```
 
 ***DO NOT*** type like this:
@@ -54,11 +54,11 @@ const manifest: IPCManifest = {
         output: "string"
     }
 }
-export r2mApi = createR2MApi(manifest,"my-special-channel") 
+export r2mApi = createR2MApi("my-special-channel", manifest) 
 ```
 ---
 
-### Step 2: plug the bridge into worker in main process
+### Step 2: plug the bridge into the worker in main process
 
 ```typescript
 // in main process 
@@ -99,11 +99,11 @@ bootstrap()
 ```
 While IDEs cant not auto generate interface template from a `type`, you can use the hint of manifest and copy the definition.
 
-<img src="imgs/manifest-hint.png"  style="display:block; margin: 0 auto; max-width: 500px;"/>
+<img src="imgs/manifest-hint.png"  style="display:block;"/>
 
 Wrap it with `RealType`, then parameter hint works:
 
-<img src="imgs/variable-hint.png" style="display:block; margin: 0 auto; max-width: 320px;"/>
+<img src="imgs/variable-hint.png" style="display:block;"/>
 
 
 ### Step 3: create and use client in renderer process
@@ -122,13 +122,27 @@ export async function bootstrap(log:(string)=>void) {
 
 That's all.
 
-## Supported Types
+To create an **main-to-renderer** API, which calls from main process and works on renderer process, use `createR2MApi(...)` instead, then call `plugInRenderer(...)` in renderer precess, and call `getClientFor(...)` in main process to get a client.
 
-This lib supports plain json types.
-- number - "number"
-- 
+## Manifest Supported Types
+
+This lib supports part of **primitives**:
+
+- undifined: `undifined`
+- string: `"string"`
+- number: `"number"`
+- bigint: `"bigint"`
+- boolean `"boolean"`
+
+some **structure**:
+
+- array: `["array", <non undifined type>]`
+- object: `{ <key>: <type>}`
+
+for signature:
+- optional: `["optional", <non undifined type>]`
 
 ## APIs
-[Docs Here](https://handiwork.tollife.cn/autumn-electron-ipc/)
+Source code generated docs are [here](https://handiwork.tollife.cn/autumn-electron-ipc/).
 
 

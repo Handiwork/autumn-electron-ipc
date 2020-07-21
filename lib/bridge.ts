@@ -9,14 +9,13 @@ export function checkManifest<T extends IPCManifest>(manifest: T) {
     return manifest
 }
 
-const CHANNEL_NAME = "ipc-basic-channel"
 /**
  * create API bridge between MAIN process caller and RENDERER process callee
  * @param manifest API manifest
- * @param channel the channel to use, default to "ipc-basic-channel", 
- * NOTICE:`${channel}-{new Date().getTime()}` channels are used for api reply
+ * @param channel the channel to use,  
+ * **notice**: `${channel}-${new Date().getTime()}` channels are used for api reply
  */
-export function createM2RApi<T extends IPCManifest>(manifest: T, channel: string = CHANNEL_NAME) {
+export function createM2RApi<T extends IPCManifest>(channel: string, manifest: T) {
     return {
         manifest,
         /**
@@ -52,9 +51,9 @@ export function createM2RApi<T extends IPCManifest>(manifest: T, channel: string
 /**
  * create API bridge between renderer process caller and main process callee
  * @param manifest API manifest
- * @param channel the channel to use, default to "ipc-basic-channel"
+ * @param channel the channel to use
  */
-export function createR2MApi<T extends IPCManifest>(manifest: T, channel: string = CHANNEL_NAME) {
+export function createR2MApi<T extends IPCManifest>(channel: string, manifest: T) {
     return {
         manifest,
         plugInMain(impl: API<T>) {

@@ -38,19 +38,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 exports.createR2MApi = exports.createM2RApi = exports.checkManifest = void 0;
 var electron_1 = require("electron");
+/**
+ * check manifest object and preserve the original type
+ * @param manifest
+ */
 function checkManifest(manifest) {
     return manifest;
 }
 exports.checkManifest = checkManifest;
-var CHANNEL_NAME = "ipc-basic-channel";
 /**
  * create API bridge between MAIN process caller and RENDERER process callee
  * @param manifest API manifest
  * @param channel the channel to use, default to "ipc-basic-channel",
  * NOTICE:`${channel}-{new Date().getTime()}` channels are used for api reply
  */
-function createM2RApi(manifest, channel) {
-    if (channel === void 0) { channel = CHANNEL_NAME; }
+function createM2RApi(channel, manifest) {
     return {
         manifest: manifest,
         /**
@@ -100,8 +102,7 @@ exports.createM2RApi = createM2RApi;
  * @param manifest API manifest
  * @param channel the channel to use, default to "ipc-basic-channel"
  */
-function createR2MApi(manifest, channel) {
-    if (channel === void 0) { channel = CHANNEL_NAME; }
+function createR2MApi(channel, manifest) {
     return {
         manifest: manifest,
         plugInMain: function (impl) {
