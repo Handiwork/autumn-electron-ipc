@@ -2,6 +2,13 @@
 
 This library is used to create well typed IPC API for [Electron](https://www.electronjs.org). Within a Typescript environment, this library confirms the consistency between callers and callees.
 
+ [Home Page Here](https://handiwork/github.io/autumn-electron-ipc/)
+
+ ## Install
+ ```bash
+ yarn add https://github.com/Handiwork/autumn-electron-ipc.git
+ ```
+
 ## Get Started
 
 In this chapter, we will create an render-to-main API, which calls from renderer process and works on main process.
@@ -143,6 +150,6 @@ for signature:
 - optional: `["optional", <non undifined type>]`
 
 ## APIs
-Source code generated docs are [here](https://handiwork.tollife.cn/autumn-electron-ipc/).
+Source code generated docs are [here](https://handiwork.tollife.cn/autumn-electron-ipc/api/).
 
 

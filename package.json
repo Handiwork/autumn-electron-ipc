@@ -13,7 +13,8 @@
   "license": "MIT",
   "private": false,
   "repository": {
-    "url": "https://github.com/Handiwork/autumn-electron-ipc"
+    "url": "https://github.com/Handiwork/autumn-electron-ipc.git",
+    "type": "git"
   },
   "homepage": "https://handiwork.github.io/autumn-electron-ipc",
   "publishConfig": {
