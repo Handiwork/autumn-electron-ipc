@@ -138,7 +138,7 @@ This lib supports part of **primitives**:
 - undifined: `undifined`
 - string: `"string"`
 - number: `"number"`
-- bigint: `"bigint"`
+- bigint: `"bigint"` (if your runtime supports)
 - boolean `"boolean"`
 
 some **structure**:

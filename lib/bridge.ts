@@ -49,7 +49,7 @@ export function createM2RApi<T extends IPCManifest>(channel: string, manifest: T
 }
 
 /**
- * create API bridge between renderer process caller and main process callee
+ * create API bridge between RENDERER process caller and MAIN process callee
  * @param manifest API manifest
  * @param channel the channel to use
  */

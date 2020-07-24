@@ -40,7 +40,19 @@ export interface IPCManifest {
 
 type PromiseWrap<T> = T extends "real-type-unknown" ? Promise<void> : Promise<T>
 type APIFunction<T extends FunctionDef> =
-    RealType<T["input"]> extends "real-type-unknown" ? () => PromiseWrap<RealType<T["output"]>> :
-    T["input"] extends LiteralOptional ? (param?: RealType<T["input"]>) => PromiseWrap<RealType<T["output"]>> :
-    (param: RealType<T["input"]>) => PromiseWrap<RealType<T["output"]>>
+    RealType<T["input"]> extends "real-type-unknown" ? NoArgFunction<T> :
+    T["input"] extends LiteralOptional ? OptionalFunction<T> :
+    CompleteFunction<T>
+
+interface NoArgFunction<D extends FunctionDef> {
+    (): PromiseWrap<RealType<D["output"]>>
+}
+
+interface OptionalFunction<D extends FunctionDef> {
+    (param?: RealType<D["input"]>): PromiseWrap<RealType<D["output"]>>
+}
+
+interface CompleteFunction<D extends FunctionDef> {
+    (param: RealType<D["input"]>): PromiseWrap<RealType<D["output"]>>
+}
 export type API<T extends IPCManifest> = { [x in keyof T]: APIFunction<T[x]> }
