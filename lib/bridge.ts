@@ -43,7 +43,7 @@ export function createM2RApi<T extends IPCManifest>(channel: string, manifest: T
  * **generic type required** 
  * @param channel the channel to use
  */
-export function createTsR2MApi<T>(channel: string) {
+export function createR2MApiTs<T>(channel: string) {
     return new R2MAPI<T, ClientAPI<T>>(channel)
 }
 
@@ -53,6 +53,6 @@ export function createTsR2MApi<T>(channel: string) {
  * **generic type required** 
  * @param channel the channel to use, **notice**: `${channel}-${new Date().getTime()}` channels are used for API reply
  */
-export function createTsM2RApi<T>(channel: string) {
+export function createM2RApiTs<T>(channel: string) {
     return new M2RAPI<T, ClientAPI<T>>(channel)
 }

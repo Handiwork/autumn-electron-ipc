@@ -22,7 +22,7 @@ export interface APIMain {
     asyncHello(...who: string[]): Promise<string>
     sigOk(): void
 }
-export const r2mApiTs = createTsR2MApi<APIMain>("r2m-ts")
+export const r2mApiTs = createR2MApiTs<APIMain>("r2m-ts")
 ```
 ### Step 2: implement API and plug bridge into it in main process
 ```typescript
