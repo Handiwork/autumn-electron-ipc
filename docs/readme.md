@@ -4,7 +4,7 @@ This library is used to create well typed IPC API for [Electron](https://www.ele
 
  [Home Page Here](https://handiwork.github.io/autumn-electron-ipc/)
 
- ## Install
+## Install
  ```bash
  yarn add https://github.com/Handiwork/autumn-electron-ipc.git
  ```
@@ -57,8 +57,8 @@ r2mApiTs.plugInMain(new MainServer(win))
 ```ts
 // in renderer process
 log(`tsClient.key(): ${await tsClient.key()}`)
-log(`tsClient.hello("a", "b", "c"): ${awaittsClient.hello("a", "b", "c")}`)
-log(`tsClient.asyncHello("e", "f", "g"): ${awaittsClient.asyncHello("e", "f", "g")}`)
+log(`tsClient.hello("a", "b", "c"): ${await tsClient.hello("a", "b", "c")}`)
+log(`tsClient.asyncHello("e", "f", "g"): ${await tsClient.asyncHello("e", "f", "g")}`)
 log(`tsClient.sigOk(): ${await tsClient.sigOk()}`)
 ```
 **as for main-to-renderer API**
