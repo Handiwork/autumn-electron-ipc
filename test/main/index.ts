@@ -1,34 +1,26 @@
 import { app, BrowserWindow } from 'electron';
 import { resolve } from 'path';
 
-import { r2mApi, m2rApi } from "../common";
-import { API, RealType } from '../../lib';
+import { r2mApi, m2rApi, APIMain, r2mApiTs, APIRenderer, m2rApiTs } from "../common";
+import { checkApiImpl, ClientAPI } from '../../lib';
 
-class Server implements API<typeof r2mApi.manifest>{
-
-    client: API<typeof m2rApi.manifest>
-
+class MainServer implements APIMain {
+    client: ClientAPI<APIRenderer>
+    key: string = "proxy main server"
     constructor(win: BrowserWindow) {
-        this.client = m2rApi.getClientFor(win.webContents)
+        this.client = m2rApiTs.getClientFor(win.webContents)
+        this.sigOk.bind(this)
     }
-
-    async hello(who?: string) {
-        return `hello ${who ?? "guest"}`
+    hello(...who: string[]): string {
+        return who.join(" SYNC ")
     }
-
-    async complex(param: RealType<{
-        f1: "string";
-        f2: "number";
-    }>) {
-        return {
-            f1: param.f2,
-            f2: param.f1
-        }
+    async asyncHello(...who: string[]): Promise<string> {
+        return who.join(" ASYNC ")
     }
-
-    async sigOk() {
+    sigOk() {
         setTimeout(async () => {
-            console.log(`client.hello(["init", "from", "main"]): ${await this.client.hello(["init", "from", "main"])}`)
+            console.log(`client.hello(["call", "from", "main"]): `
+                + await this.client.hello(["call", "from", "main"]))
         }, 1000);
     }
 }
@@ -42,9 +34,27 @@ async function bootstrap() {
         },
         show: false
     })
-    win.maximize()
-    const server = new Server(win)
+    const server = checkApiImpl(r2mApi.manifest, {
+        client: m2rApi.getClientFor(win.webContents),
+        async hello(who?) {
+            return `hello ${who || "guest"}`
+        },
+        async complex(param) {
+            return {
+                f1: param.f2,
+                f2: param.f1
+            }
+        },
+        async sigOk() {
+            setTimeout(async () => {
+                console.log(`client.hello(["call", "from", "main"]): `
+                    + await this.client.hello(["call", "from", "main"]))
+            }, 1000);
+        }
+    })
     r2mApi.plugInMain(server)
+    r2mApiTs.plugInMain(new MainServer(win))
+    win.maximize()
     win.loadFile(resolve(__dirname, '../ui/index.html'))
     win.show()
 }

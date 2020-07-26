@@ -1,6 +1,6 @@
 # Autumn Electron IPC
 
-This library is used to create well typed IPC API for [Electron](https://www.electronjs.org). Within a Typescript environment, this library confirms the consistency between callers and callees.
+This library is used to create well typed IPC API for [Electron](https://www.electronjs.org). Within a Typescript (aided) environment, this library confirms the consistency between callers and callees.
 
  [Home Page Here](https://handiwork.github.io/autumn-electron-ipc/)
 
@@ -8,10 +8,66 @@ This library is used to create well typed IPC API for [Electron](https://www.ele
  ```bash
  yarn add https://github.com/Handiwork/autumn-electron-ipc.git
  ```
+ **requirements**: `electron >= 7.0 `
 
-## Get Started
+## Get Started (Typescript)
+In this chapter, we will create an renderer-to-main API, which is called from renderer process and works on main process.
 
-In this chapter, we will create an render-to-main API, which calls from renderer process and works on main process.
+### Step 1: create an API interface and export the API bridge
+```typescript
+// in shared file
+export interface APIMain {
+    key: string
+    hello(...who: string[]): string
+    asyncHello(...who: string[]): Promise<string>
+    sigOk(): void
+}
+export const r2mApiTs = createTsR2MApi<APIMain>("r2m-ts")
+```
+### Step 2: implement API and plug bridge into it in main process
+```typescript
+// in main process
+class MainServer implements APIMain {
+    client: ClientAPI<APIRenderer>
+    key: string = "proxy main server"
+    constructor(win: BrowserWindow) {
+        this.client = m2rApiTs.getClientFor(win.webContents)
+        this.sigOk.bind(this)
+    }
+    hello(...who: string[]): string {
+        return who.join(" SYNC ")
+    }
+    async asyncHello(...who: string[]): Promise<string> {
+        return who.join(" ASYNC ")
+    }
+    sigOk() {
+        setTimeout(async () => {
+            console.log(`client.hello(["call", "from", "main"]): `
+                + await this.client.hello(["call", "from", "main"]))
+        }, 1000);
+    }
+}
+```
+
+```typescript
+// in main process
+r2mApiTs.plugInMain(new MainServer(win))
+```
+### Step 3: get and use client in renderer process
+```ts
+// in renderer process
+log(`tsClient.key(): ${await tsClient.key()}`)
+log(`tsClient.hello("a", "b", "c"): ${awaittsClient.hello("a", "b", "c")}`)
+log(`tsClient.asyncHello("e", "f", "g"): ${awaittsClient.asyncHello("e", "f", "g")}`)
+log(`tsClient.sigOk(): ${await tsClient.sigOk()}`)
+```
+**as for main-to-renderer API**
+
+Swap code location and call `createM2RApiTs()`, `plugInRenderer(...)`, `getClientFor(...)` function series instead.
+
+## Usage in Javascript
+
+Since javascript environment does not support interface,we will create an render-to-main API based on a manifest object.
 
 ### Step 1: create an IPC bridge
 
@@ -38,10 +94,7 @@ export const r2mApi = createR2MApi("r2m-channel",{
 })
 ```
 
----
-***NOTE***
-
-If you want to create a manifest object with typing assistance, do use `checkManifest` function, this function checks your manifest and preserve the original type.
+If you want to create a manifest object with typing, do use `checkManifest` function, this function checks your manifest and preserve the original type.
 ```typescript
 const manifest = checkManifest({
     hello: {
@@ -52,50 +105,32 @@ const manifest = checkManifest({
 export r2mApi = createR2MApi("my-special-channel" , manifest)
 ```
 
-***DO NOT*** type like this:
-
-```typescript
-const manifest: IPCManifest = {
-    hello: {
-        input: ["array", "string"],
-        output: "string"
-    }
-}
-export r2mApi = createR2MApi("my-special-channel", manifest) 
-```
----
-
 ### Step 2: plug the bridge into the worker in main process
 
 ```typescript
 // in main process 
-
-class Server implements API<typeof r2mApi.manifest>{
-
-    async hello(who?: string) {
-        return `hello ${who | "guest"}`
-    }
-
-    async complex(param: RealType<{
-        f1: "string";
-        f2: "number";
-    }>) {
-        return {
-            f1: param.f2,
-            f2: param.f1
-        }
-    }
-
-    async sigOk() {
-         /* some code */
-    }
-}
-
 async function bootstrap() {
     await app.whenReady()
     let win = new BrowserWindow(/* options */)
     //*************************************
-    const server = new Server()
+    const server = checkApiImpl(r2mApi.manifest, {
+        client: m2rApi.getClientFor(win.webContents),
+        async hello(who?) {
+            return `hello ${who || "guest"}`
+        },
+        async complex(param) {
+            return {
+                f1: param.f2,
+                f2: param.f1
+            }
+        },
+        async sigOk() {
+            setTimeout(async () => {
+                console.log(`client.hello(["call", "from", "main"]): `
+                    + await this.client.hello(["call", "from", "main"]))
+            }, 1000);
+        }
+    })
     r2mApi.plugInMain(server)
     //*************************************
     win.loadFile(/* file */)
@@ -104,25 +139,17 @@ async function bootstrap() {
 
 bootstrap()
 ```
-While IDEs cant not auto generate interface template from a `type`, you can use the hint of manifest and copy the definition.
-
-<img src="imgs/manifest-hint.png"  style="display:block;"/>
-
-Wrap it with `RealType`, then parameter hint works:
-
-<img src="imgs/variable-hint.png" style="display:block;"/>
-
+![variable-hint](imgs/variable-hint.png)
 
 ### Step 3: create and use client in renderer process
 ```typescript
 // in renderer process, preload script preferred
 
-export async function bootstrap(log:(string)=>void) {
+export async function bootstrap(log) {
     const client = r2mApi.getClient()
     log(`client.hello("Autumn"): ${await client.hello("Autumn")}`)
     log(`client.hello(): ${await client.hello()}`)
-    const r = JSON.stringify(await client.complex({ f1: "nine", f2: 9 }))
-    log(`client.complex({ f1: "nine", f2: 9 })}: ${r}`)
+    log(`client.complex({ f1: "nine", f2: 9 })}: ${JSON.stringify(await client.complex({ f1: "nine", f2: 9 }))}`)
     log(`client.sigOk(): ${await client.sigOk()}`)
 }
 ```

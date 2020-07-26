@@ -1,3 +1,4 @@
+// Literal Types
 type LiteralType = NonOptionalLiteralType | LiteralOptional
 type NonOptionalLiteralType =
     "string"
@@ -8,15 +9,12 @@ type NonOptionalLiteralType =
     | LiteralArray
 type LiteralObject = { [x: string]: LiteralType }
 type LiteralArray = ["array", NonOptionalLiteralType]
-type LiteralOptional = SpecifiedOptional | UndifinedOptional
-type UndifinedOptional = undefined
-type SpecifiedOptional = ["optional", NonOptionalLiteralType]
+type LiteralOptional = LiteralSpecifiedOptional | LiteralUndifinedOptional
+type LiteralUndifinedOptional = undefined
+type LiteralSpecifiedOptional = ["optional", NonOptionalLiteralType]
 
-interface FunctionDef {
-    input?: LiteralType
-    output?: LiteralType
-}
-
+// Real Types
+type Unknown = "real-type-unknown"
 type RealObject<T extends LiteralObject> = { [x in keyof T]: RealType<T[x]> }
 type RealOptional<T extends LiteralType> = NonOptionalRealType<T> | undefined
 type RealArray<T extends LiteralType> = Array<NonOptionalRealType<T>>
@@ -27,32 +25,46 @@ type NonOptionalRealType<T extends LiteralType> =
     T extends "boolean" ? boolean :
     T extends LiteralObject ? RealObject<T> :
     T extends LiteralArray ? RealArray<T[1]> :
-    "real-type-unknown"
+    Unknown
 export type RealType<T extends LiteralType> =
-    T extends UndifinedOptional ? undefined :
-    T extends SpecifiedOptional ? RealOptional<T[1]> :
+    T extends LiteralUndifinedOptional ? undefined :
+    T extends LiteralSpecifiedOptional ? RealOptional<T[1]> :
     NonOptionalRealType<T>
 
+interface FunctionDef {
+    input?: LiteralType
+    output?: LiteralType
+}
 
 export interface IPCManifest {
     [x: string]: FunctionDef
 }
 
-type PromiseWrap<T> = T extends "real-type-unknown" ? Promise<void> : Promise<T>
+type PromiseRealType<T extends LiteralType> =
+    RealType<T> extends Unknown ? Promise<void> : Promise<RealType<T>>
 type APIFunction<T extends FunctionDef> =
-    RealType<T["input"]> extends "real-type-unknown" ? NoArgFunction<T> :
+    RealType<T["input"]> extends Unknown ? NoArgFunction<T> :
     T["input"] extends LiteralOptional ? OptionalFunction<T> :
     CompleteFunction<T>
 
 interface NoArgFunction<D extends FunctionDef> {
-    (): PromiseWrap<RealType<D["output"]>>
+    (): PromiseRealType<D["output"]>
 }
 
 interface OptionalFunction<D extends FunctionDef> {
-    (param?: RealType<D["input"]>): PromiseWrap<RealType<D["output"]>>
+    (param?: RealType<D["input"]>): PromiseRealType<D["output"]>
 }
 
 interface CompleteFunction<D extends FunctionDef> {
-    (param: RealType<D["input"]>): PromiseWrap<RealType<D["output"]>>
+    (param: RealType<D["input"]>): PromiseRealType<D["output"]>
 }
 export type API<T extends IPCManifest> = { [x in keyof T]: APIFunction<T[x]> }
+
+// Normal Types
+type TFunction<A extends any[], R> = (...args: A) => R
+
+type Promisify<T> = T extends TFunction<infer A, Promise<infer R>> ? T :
+    T extends TFunction<infer A, infer R> ? TFunction<A, Promise<R>> :
+    () => Promise<T>
+
+export type ClientAPI<T> = { [x in keyof T]: Promisify<T[x]> }

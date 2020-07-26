@@ -1,4 +1,4 @@
-import { createM2RApi, createR2MApi } from '../../lib';
+import { createM2RApi, createR2MApi, createTsR2MApi, createTsM2RApi } from '../../lib';
 
 export const m2rApi = createM2RApi("m2r-channel", {
     hello: {
@@ -24,3 +24,17 @@ export const r2mApi = createR2MApi("r2m-chennel", {
     },
     sigOk: {}
 })
+
+export interface APIMain {
+    key: string
+    hello(...who: string[]): string
+    asyncHello(...who: string[]): Promise<string>
+    sigOk(): void
+}
+export const r2mApiTs = createTsR2MApi<APIMain>("r2m-ts")
+
+export interface APIRenderer {
+    hello(who: string[]): string
+}
+
+export const m2rApiTs = createTsM2RApi<APIRenderer>("m2r-ts")

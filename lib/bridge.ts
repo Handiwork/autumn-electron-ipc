@@ -1,51 +1,22 @@
-import { ipcRenderer, ipcMain, WebContents } from "electron"
-import { IPCManifest, API } from "."
+import { IPCManifest, API, ClientAPI } from "."
+import { R2MAPIm, M2RAPIm, R2MAPI, M2RAPI } from "./api"
 
 /**
  * check manifest object and preserve the original type
  * @param manifest 
  */
-export function checkManifest<T extends IPCManifest>(manifest: T) {
+export function checkManifest<M extends IPCManifest>(manifest: M) {
     return manifest
 }
 
 /**
- * create API bridge between MAIN process caller and RENDERER process callee
- * @param manifest API manifest
- * @param channel the channel to use,  
- * **notice**: `${channel}-${new Date().getTime()}` channels are used for api reply
+ * check implementation with manifest
+ * @param manifest the API manifest
+ * @param impl the implementation
+ * @returns impl
  */
-export function createM2RApi<T extends IPCManifest>(channel: string, manifest: T) {
-    return {
-        manifest,
-        /**
-         * plug bridge in renderer process implementation
-         * @param impl the object that implements API
-         */
-        plugInRenderer(impl: API<T>) {
-            ipcRenderer.on(channel, async (e, replayChannel, name, args) => {
-                let result = await impl[name](args)
-                e.sender.send(replayChannel, result)
-            })
-        },
-        /**
-         * get client for target webContents
-         * @param win target webContents
-         */
-        getClientFor(win: WebContents): API<T> {
-            let api: any = {}
-            for (let name in manifest) {
-                api[name] = (args: any) => new Promise((resolve, reject) => {
-                    const replyChannel = `${channel}-${new Date().getTime()}`
-                    win.send(channel, replyChannel, name, args)
-                    ipcMain.once(replyChannel, (e, args) => {
-                        resolve(args)
-                    })
-                })
-            }
-            return api
-        }
-    }
+export function checkApiImpl<M extends IPCManifest, I extends API<M>>(manifest: M, impl: I) {
+    return impl
 }
 
 /**
@@ -54,19 +25,34 @@ export function createM2RApi<T extends IPCManifest>(channel: string, manifest: T
  * @param channel the channel to use
  */
 export function createR2MApi<T extends IPCManifest>(channel: string, manifest: T) {
-    return {
-        manifest,
-        plugInMain(impl: API<T>) {
-            ipcMain.handle(channel, async (e, name, args) => {
-                return await impl[name](args)
-            })
-        },
-        getClient(): API<T> {
-            let api: any = {}
-            for (let name in manifest) {
-                api[name] = (args: any) => ipcRenderer.invoke(channel, name, args)
-            }
-            return api
-        }
-    }
+    return new R2MAPIm<API<T>, API<T>, T>(channel, manifest)
+}
+
+/**
+ * create API bridge between MAIN process caller and RENDERER process callee
+ * @param manifest API manifest
+ * @param channel the channel to use, **notice**: `${channel}-${new Date().getTime()}` channels are used for API reply
+ */
+export function createM2RApi<T extends IPCManifest>(channel: string, manifest: T) {
+    return new M2RAPIm<API<T>, API<T>, T>(channel, manifest)
+}
+
+/**
+ * create API bridge between RENDERER process caller and MAIN process callee
+ * 
+ * **generic type required** 
+ * @param channel the channel to use
+ */
+export function createTsR2MApi<T>(channel: string) {
+    return new R2MAPI<T, ClientAPI<T>>(channel)
+}
+
+/**
+ * create API bridge between MAIN process caller and RENDERER process callee
+ * 
+ * **generic type required** 
+ * @param channel the channel to use, **notice**: `${channel}-${new Date().getTime()}` channels are used for API reply
+ */
+export function createTsM2RApi<T>(channel: string) {
+    return new M2RAPI<T, ClientAPI<T>>(channel)
 }
