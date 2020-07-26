@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.createTsM2RApi = exports.createTsR2MApi = exports.createM2RApi = exports.createR2MApi = exports.checkApiImpl = exports.checkManifest = void 0;
+exports.createM2RApiTs = exports.createR2MApiTs = exports.createM2RApi = exports.createR2MApi = exports.checkApiImpl = exports.checkManifest = void 0;
 var api_1 = require("./api");
 /**
  * check manifest object and preserve the original type
@@ -44,17 +44,17 @@ exports.createM2RApi = createM2RApi;
  * **generic type required**
  * @param channel the channel to use
  */
-function createTsR2MApi(channel) {
+function createR2MApiTs(channel) {
     return new api_1.R2MAPI(channel);
 }
-exports.createTsR2MApi = createTsR2MApi;
+exports.createR2MApiTs = createR2MApiTs;
 /**
  * create API bridge between MAIN process caller and RENDERER process callee
  *
  * **generic type required**
  * @param channel the channel to use, **notice**: `${channel}-${new Date().getTime()}` channels are used for API reply
  */
-function createTsM2RApi(channel) {
+function createM2RApiTs(channel) {
     return new api_1.M2RAPI(channel);
 }
-exports.createTsM2RApi = createTsM2RApi;
+exports.createM2RApiTs = createM2RApiTs;

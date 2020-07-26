@@ -30,11 +30,11 @@ export declare function createM2RApi<T extends IPCManifest>(channel: string, man
  * **generic type required**
  * @param channel the channel to use
  */
-export declare function createTsR2MApi<T>(channel: string): R2MAPI<T, ClientAPI<T>>;
+export declare function createR2MApiTs<T>(channel: string): R2MAPI<T, ClientAPI<T>>;
 /**
  * create API bridge between MAIN process caller and RENDERER process callee
  *
  * **generic type required**
  * @param channel the channel to use, **notice**: `${channel}-${new Date().getTime()}` channels are used for API reply
  */
-export declare function createTsM2RApi<T>(channel: string): M2RAPI<T, ClientAPI<T>>;
+export declare function createM2RApiTs<T>(channel: string): M2RAPI<T, ClientAPI<T>>;
