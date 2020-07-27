@@ -5,7 +5,12 @@ This library is used to create well typed IPC API for [Electron](https://www.ele
  [Home Page Here](https://handiwork.github.io/autumn-electron-ipc/)
 
 ## Install
+
  ```bash
+ yarn add autumn-electron-ipc
+ ```
+ from github
+  ```bash
  yarn add https://github.com/Handiwork/autumn-electron-ipc.git
  ```
  **requirements**: `electron >= 7.0 `
