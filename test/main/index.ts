@@ -5,18 +5,22 @@ import { r2mApi, m2rApi, APIMain, r2mApiTs, APIRenderer, m2rApiTs } from "../com
 import { checkApiImpl, ClientAPI } from '../../lib';
 
 class MainServer implements APIMain {
+
     client: ClientAPI<APIRenderer>
     key: string = "proxy main server"
+
     constructor(win: BrowserWindow) {
         this.client = m2rApiTs.getClientFor(win.webContents)
-        this.sigOk.bind(this)
     }
+
     hello(...who: string[]): string {
         return who.join(" SYNC ")
     }
+
     async asyncHello(...who: string[]): Promise<string> {
         return who.join(" ASYNC ")
     }
+
     sigOk() {
         setTimeout(async () => {
             console.log(`client.hello(["call", "from", "main"]): `

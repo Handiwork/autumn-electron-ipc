@@ -21,30 +21,38 @@ In this chapter, we will create an renderer-to-main API, which is called from re
 ### Step 1: create an API interface and export the API bridge
 ```typescript
 // in shared file
+
 export interface APIMain {
     key: string
     hello(...who: string[]): string
     asyncHello(...who: string[]): Promise<string>
     sigOk(): void
 }
+
 export const r2mApiTs = createR2MApiTs<APIMain>("r2m-ts")
+
 ```
 ### Step 2: implement API and plug bridge into it in main process
 ```typescript
 // in main process
+
 class MainServer implements APIMain {
+
     client: ClientAPI<APIRenderer>
     key: string = "proxy main server"
+
     constructor(win: BrowserWindow) {
         this.client = m2rApiTs.getClientFor(win.webContents)
-        this.sigOk.bind(this)
     }
+
     hello(...who: string[]): string {
         return who.join(" SYNC ")
     }
+
     async asyncHello(...who: string[]): Promise<string> {
         return who.join(" ASYNC ")
     }
+
     sigOk() {
         setTimeout(async () => {
             console.log(`client.hello(["call", "from", "main"]): `
@@ -56,11 +64,13 @@ class MainServer implements APIMain {
 
 ```typescript
 // in main process
+
 r2mApiTs.plugInMain(new MainServer(win))
 ```
 ### Step 3: get and use client in renderer process
 ```ts
 // in renderer process
+
 log(`tsClient.key(): ${await tsClient.key()}`)
 log(`tsClient.hello("a", "b", "c"): ${await tsClient.hello("a", "b", "c")}`)
 log(`tsClient.asyncHello("e", "f", "g"): ${await tsClient.asyncHello("e", "f", "g")}`)
@@ -107,6 +117,7 @@ const manifest = checkManifest({
         output: "string"
     },
 })
+
 export r2mApi = createR2MApi("my-special-channel" , manifest)
 ```
 
@@ -114,6 +125,7 @@ export r2mApi = createR2MApi("my-special-channel" , manifest)
 
 ```typescript
 // in main process 
+
 async function bootstrap() {
     await app.whenReady()
     let win = new BrowserWindow(/* options */)
