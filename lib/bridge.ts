@@ -1,4 +1,4 @@
-import { IPCManifest, API, ClientAPI } from "."
+import { IPCManifest, API, ClientAPI } from "./types"
 import { R2MAPIm, M2RAPIm, R2MAPI, M2RAPI } from "./api"
 
 /**

@@ -4,6 +4,10 @@ This library is used to create well typed IPC API for [Electron](https://www.ele
 
  [Home Page Here](https://handiwork.github.io/autumn-electron-ipc/)
 
+## Requirements
+-  `electron >= 7.0 `
+-  `typescript >= 3.7` (not specified as a peerdependency, but required to build with typescript or to get typing suggestions in a javascript project)
+
 ## Install
 
  ```bash
@@ -13,14 +17,13 @@ This library is used to create well typed IPC API for [Electron](https://www.ele
   ```bash
  yarn add https://github.com/Handiwork/autumn-electron-ipc.git
  ```
- **requirements**: `electron >= 7.0 `
 
 ## Get Started (Typescript)
-In this chapter, we will create an renderer-to-main API, which is called from renderer process and works on main process.
+Here we'll create a renderer-to-main API, which is called from renderer process and works on main process.
 
 ### Step 1: create an API interface and export the API bridge
 ```typescript
-// in shared file
+// in shared file, can be imoported in both main and renderer process
 
 export interface APIMain {
     key: string
@@ -29,10 +32,11 @@ export interface APIMain {
     sigOk(): void
 }
 
+// the generic type APImain is required
 export const r2mApiTs = createR2MApiTs<APIMain>("r2m-ts")
 
 ```
-### Step 2: implement API and plug bridge into it in main process
+### Step 2: implement API and connect with the bridge in main process
 ```typescript
 // in main process
 
@@ -42,6 +46,7 @@ class MainServer implements APIMain {
     key: string = "proxy main server"
 
     constructor(win: BrowserWindow) {
+        // this is a main process client
         this.client = m2rApiTs.getClientFor(win.webContents)
     }
 
@@ -76,7 +81,10 @@ log(`tsClient.hello("a", "b", "c"): ${await tsClient.hello("a", "b", "c")}`)
 log(`tsClient.asyncHello("e", "f", "g"): ${await tsClient.asyncHello("e", "f", "g")}`)
 log(`tsClient.sigOk(): ${await tsClient.sigOk()}`)
 ```
-**as for main-to-renderer API**
+
+> **note**: exposed properties and functions are all transformed to async functions on the client side.
+
+### Main to renderer API
 
 Swap code location and call `createM2RApiTs()`, `plugInRenderer(...)`, `getClientFor(...)` function series instead.
 
