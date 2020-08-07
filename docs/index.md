@@ -32,7 +32,7 @@ export interface APIMain {
     sigOk(): void
 }
 
-// the generic type APImain is required
+// the generic type APIMain is required
 export const r2mApiTs = createR2MApiTs<APIMain>("r2m-ts")
 
 ```
@@ -58,11 +58,9 @@ class MainServer implements APIMain {
         return who.join(" ASYNC ")
     }
 
-    sigOk() {
-        setTimeout(async () => {
-            console.log(`client.hello(["call", "from", "main"]): `
-                + await this.client.hello(["call", "from", "main"]))
-        }, 1000);
+    async sigOk() {
+        const r = await this.client.hello(["call", "from", "main"]);
+        console.log(`client.hello(["call", "from", "main"]): ${r}`)
     }
 }
 ```

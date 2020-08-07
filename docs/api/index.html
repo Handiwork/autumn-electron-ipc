@@ -2726,6 +2726,98 @@ img {
 </nav>
 <div class="container container-main">
 	<div class="content-wrap">
+		<div class="tsd-panel tsd-typography">
+			<a href="#autumn-electron-ipc" id="autumn-electron-ipc" style="color: inherit; text-decoration: none;">
+				<h1>Autumn Electron IPC</h1>
+			</a>
+			<p>This library is used to create well typed IPC API for <a href="https://www.electronjs.org">Electron</a>. Within a Typescript (aided) environment, this library confirms the consistency between callers and callees.</p>
+			<p> <a href="https://handiwork.github.io/autumn-electron-ipc/">Home Page Here</a></p>
+			<a href="#requirements" id="requirements" style="color: inherit; text-decoration: none;">
+				<h2>Requirements</h2>
+			</a>
+			<ul>
+				<li><code>electron &gt;= 7.0</code></li>
+				<li><code>typescript &gt;= 3.7</code> (not specified as a peerdependency, but required to build with typescript or to get typing suggestions in a javascript project)</li>
+			</ul>
+			<a href="#install" id="install" style="color: inherit; text-decoration: none;">
+				<h2>Install</h2>
+			</a>
+			<pre><code class="language-bash"> yarn add autumn-electron-ipc</code></pre>
+			<p> from github</p>
+			<pre><code class="language-bash"> yarn add https://github.com/Handiwork/autumn-electron-ipc.git</code></pre>
+			<a href="#get-started-typescript" id="get-started-typescript" style="color: inherit; text-decoration: none;">
+				<h2>Get Started (Typescript)</h2>
+			</a>
+			<p>Here we&#39;ll create a renderer-to-main API, which is called from renderer process and works on main process.</p>
+			<a href="#step-1-create-an-api-interface-and-export-the-api-bridge" id="step-1-create-an-api-interface-and-export-the-api-bridge" style="color: inherit; text-decoration: none;">
+				<h3>Step 1: create an API interface and export the API bridge</h3>
+			</a>
+			<pre><code class="language-typescript"><span class="hljs-comment">// in shared file, can be imoported in both main and renderer process</span>
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> APIMain {
+    key: <span class="hljs-built_in">string</span>
+    hello(...who: <span class="hljs-built_in">string</span>[]): <span class="hljs-built_in">string</span>
+    asyncHello(...who: <span class="hljs-built_in">string</span>[]): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-built_in">string</span>&gt;
+    sigOk(): <span class="hljs-built_in">void</span>
+}
+
+<span class="hljs-comment">// the generic type APImain is required</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> r2mApiTs = createR2MApiTs&lt;APIMain&gt;(<span class="hljs-string">&quot;r2m-ts&quot;</span>)
+</code></pre>
+			<a href="#step-2-implement-api-and-connect-with-the-bridge-in-main-process" id="step-2-implement-api-and-connect-with-the-bridge-in-main-process" style="color: inherit; text-decoration: none;">
+				<h3>Step 2: implement API and connect with the bridge in main process</h3>
+			</a>
+			<pre><code class="language-typescript"><span class="hljs-comment">// in main process</span>
+
+<span class="hljs-keyword">class</span> MainServer <span class="hljs-keyword">implements</span> APIMain {
+
+    client: ClientAPI&lt;APIRenderer&gt;
+    key: <span class="hljs-built_in">string</span> = <span class="hljs-string">&quot;proxy main server&quot;</span>
+
+    <span class="hljs-keyword">constructor</span>(<span class="hljs-params">win: BrowserWindow</span>) {
+        <span class="hljs-comment">// this is a main process client</span>
+        <span class="hljs-built_in">this</span>.client = m2rApiTs.getClientFor(win.webContents)
+    }
+
+    hello(...who: <span class="hljs-built_in">string</span>[]): <span class="hljs-built_in">string</span> {
+        <span class="hljs-keyword">return</span> who.join(<span class="hljs-string">&quot; SYNC &quot;</span>)
+    }
+
+    <span class="hljs-keyword">async</span> asyncHello(...who: <span class="hljs-built_in">string</span>[]): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-built_in">string</span>&gt; {
+        <span class="hljs-keyword">return</span> who.join(<span class="hljs-string">&quot; ASYNC &quot;</span>)
+    }
+
+    sigOk() {
+        <span class="hljs-built_in">setTimeout</span>(<span class="hljs-keyword">async</span> () =&gt; {
+            <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`client.hello([&quot;call&quot;, &quot;from&quot;, &quot;main&quot;]): `</span>
+                + <span class="hljs-keyword">await</span> <span class="hljs-built_in">this</span>.client.hello([<span class="hljs-string">&quot;call&quot;</span>, <span class="hljs-string">&quot;from&quot;</span>, <span class="hljs-string">&quot;main&quot;</span>]))
+        }, <span class="hljs-number">1000</span>);
+    }
+}</code></pre>
+			<pre><code class="language-typescript"><span class="hljs-comment">// in main process</span>
+
+r2mApiTs.plugInMain(<span class="hljs-keyword">new</span> MainServer(win))</code></pre>
+			<a href="#step-3-get-and-use-client-in-renderer-process" id="step-3-get-and-use-client-in-renderer-process" style="color: inherit; text-decoration: none;">
+				<h3>Step 3: get and use client in renderer process</h3>
+			</a>
+			<pre><code class="language-ts"><span class="hljs-comment">// in renderer process</span>
+
+log(<span class="hljs-string">`tsClient.key(): <span class="hljs-subst">${<span class="hljs-keyword">await</span> tsClient.key()}</span>`</span>)
+log(<span class="hljs-string">`tsClient.hello(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;): <span class="hljs-subst">${<span class="hljs-keyword">await</span> tsClient.hello(<span class="hljs-string">&quot;a&quot;</span>, <span class="hljs-string">&quot;b&quot;</span>, <span class="hljs-string">&quot;c&quot;</span>)}</span>`</span>)
+log(<span class="hljs-string">`tsClient.asyncHello(&quot;e&quot;, &quot;f&quot;, &quot;g&quot;): <span class="hljs-subst">${<span class="hljs-keyword">await</span> tsClient.asyncHello(<span class="hljs-string">&quot;e&quot;</span>, <span class="hljs-string">&quot;f&quot;</span>, <span class="hljs-string">&quot;g&quot;</span>)}</span>`</span>)
+log(<span class="hljs-string">`tsClient.sigOk(): <span class="hljs-subst">${<span class="hljs-keyword">await</span> tsClient.sigOk()}</span>`</span>)</code></pre>
+			<blockquote>
+				<p><strong>note</strong>: exposed properties and functions are all transformed to async functions on the client side.</p>
+			</blockquote>
+			<a href="#main-to-renderer-api" id="main-to-renderer-api" style="color: inherit; text-decoration: none;">
+				<h3>Main to renderer API</h3>
+			</a>
+			<p>Swap code location and call <code>createM2RApiTs()</code>, <code>plugInRenderer(...)</code>, <code>getClientFor(...)</code> function series instead.</p>
+			<a href="#usage-in-javascript" id="usage-in-javascript" style="color: inherit; text-decoration: none;">
+				<h2>Usage in Javascript</h2>
+			</a>
+			<p> <a href="https://handiwork.github.io/autumn-electron-ipc/">Go Home Page Here</a></p>
+		</div>
 		<div style="position:relative;"><a name="typedoc-main-index" class="tsd-anchor"></a></div>
 		<section class="tsd-panel-group tsd-index-group">
 			<h2>Index</h2>
@@ -2736,6 +2828,7 @@ img {
 						<ul class="tsd-index-list">
 							<li class="tsd-kind-module"><a href="modules/_lib_api_.html" class="tsd-kind-icon">&quot;lib/api&quot;</a></li>
 							<li class="tsd-kind-module"><a href="modules/_lib_bridge_.html" class="tsd-kind-icon">&quot;lib/bridge&quot;</a></li>
+							<li class="tsd-kind-module"><a href="modules/_lib_helpers_.html" class="tsd-kind-icon">&quot;lib/helpers&quot;</a></li>
 							<li class="tsd-kind-module"><a href="modules/_lib_index_.html" class="tsd-kind-icon">&quot;lib/index&quot;</a></li>
 							<li class="tsd-kind-module"><a href="modules/_lib_types_.html" class="tsd-kind-icon">&quot;lib/types&quot;</a></li>
 						</ul>
