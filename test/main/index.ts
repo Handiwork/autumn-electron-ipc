@@ -21,11 +21,9 @@ class MainServer implements APIMain {
         return who.join(" ASYNC ")
     }
 
-    sigOk() {
-        setTimeout(async () => {
-            console.log(`client.hello(["call", "from", "main"]): `
-                + await this.client.hello(["call", "from", "main"]))
-        }, 1000);
+    async sigOk() {
+        const r = await this.client.hello(["call", "from", "main"]);
+        console.log(`client.hello(["call", "from", "main"]): ${r}`)
     }
 }
 
@@ -50,10 +48,8 @@ async function bootstrap() {
             }
         },
         async sigOk() {
-            setTimeout(async () => {
-                console.log(`client.hello(["call", "from", "main"]): `
-                    + await this.client.hello(["call", "from", "main"]))
-            }, 1000);
+            const r = await this.client.hello(["call", "from", "main"]);
+            console.log(`client.hello(["call", "from", "main"]): ${r}`)
         }
     })
     r2mApi.plugInMain(server)

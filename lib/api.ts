@@ -1,16 +1,10 @@
-import { ipcMain, ipcRenderer, WebContents } from "electron"
+import { ipcMain, ipcRenderer, WebContents, MessageChannelMain } from "electron"
 
 async function call(impl: any, prop: string, ...args: any[]) {
     const target = impl[prop]
-    if (typeof target === "function") {
+    if (typeof target === "function")
         return target.call(impl, ...args)
-    } else {
-        return target
-    }
-}
-
-function getReplyChannel(channel: string) {
-    return `${channel}-${new Date().getTime()}`
+    else return target
 }
 
 export class R2MAPI<S, C> {
@@ -20,6 +14,7 @@ export class R2MAPI<S, C> {
      * @param impl the object that implements API
      */
     plugInMain<I extends S>(impl: I) {
+        ipcMain.removeHandler(this.channel)
         ipcMain.handle(this.channel, async (_, name, ...args) => {
             return call(impl, name, ...args)
         })
@@ -49,11 +44,15 @@ export class M2RAPI<S, C>{
      * @param impl the object that implements API
      */
     plugInRenderer<I extends S>(impl: I) {
+        ipcRenderer.removeAllListeners(this.channel)
         ipcRenderer.on(
             this.channel,
-            async (e, replayChannel, name, ...args) => {
+            async (e, msg) => {
+                const [name, ...args] = msg
+                const [port] = e.ports
                 let result = await call(impl, name, ...args)
-                e.sender.send(replayChannel, result)
+                port.postMessage(result)
+                port.close()
             }
         )
     }
@@ -65,11 +64,13 @@ export class M2RAPI<S, C>{
         return new Proxy<any>({}, {
             get: (_, prop) => {
                 return (...args: any[]) => new Promise((resolve, _) => {
-                    const replyChannel = getReplyChannel(this.channel)
-                    webContents.send(this.channel, replyChannel, prop, ...args)
-                    ipcMain.once(replyChannel, (_, result) => {
-                        resolve(result)
+                    const { port1, port2 } = new MessageChannelMain()
+                    port1.once("message", (e) => {
+                        resolve(e.data)
+                        port1.close()
                     })
+                    port1.start()
+                    webContents.postMessage(this.channel, [prop, ...args], [port2])
                 })
             }
         })
