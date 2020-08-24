@@ -1,4 +1,5 @@
 import { createM2RApi, createR2MApi, createR2MApiTs, createM2RApiTs } from '../../lib';
+import { BrowserWindow } from 'electron';
 
 export const m2rApi = createM2RApi("m2r-channel", {
     hello: {
@@ -38,3 +39,5 @@ export interface APIRenderer {
 }
 
 export const m2rApiTs = createM2RApiTs<APIRenderer>("m2r-ts")
+
+export const mainWindowApi = createR2MApiTs<BrowserWindow>("main-window")

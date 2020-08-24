@@ -1,8 +1,6 @@
 # Autumn Electron IPC
 
-This library is used to create well typed IPC API for [Electron](https://www.electronjs.org). Within a Typescript (aided) environment, this library confirms the consistency between callers and callees.
-
- [Home Page Here](https://handiwork.github.io/autumn-electron-ipc/)
+This library is used to create well typed IPC API for [Electron](https://www.electronjs.org). Within a Typescript (aided) environment, it confirms the consistency between callers and callees.
 
 ## Requirements
 -  `electron >= 7.0 `
@@ -18,7 +16,7 @@ This library is used to create well typed IPC API for [Electron](https://www.ele
  yarn add https://github.com/Handiwork/autumn-electron-ipc.git
  ```
 
-## Get Started (Typescript)
+## Usage in Typescript
 Here we'll create a renderer-to-main API, which is called from renderer process and works on main process.
 
 ### Step 1: create an API interface and export the API bridge

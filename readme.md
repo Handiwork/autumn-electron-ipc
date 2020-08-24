@@ -1,8 +1,6 @@
 # Autumn Electron IPC
 
-This library is used to create well typed IPC API for [Electron](https://www.electronjs.org). Within a Typescript (aided) environment, this library confirms the consistency between callers and callees.
-
- [Home Page Here](https://handiwork.github.io/autumn-electron-ipc/)
+Since `remote` module is going to be deprated (see -> [Deprecate the 'remote' module and move it to userland](https://github.com/electron/electron/issues/21408)), we have to use IPC calls with anonymous arguments like `ipcRenderer.invoke("main-window","set-width",960)`, where Typescript is useless. This lib confirms the type consistency between callers and callees within a Typescript (aided) environment.
 
 ## Requirements
 -  `electron >= 7.0 `
@@ -10,82 +8,55 @@ This library is used to create well typed IPC API for [Electron](https://www.ele
 
 ## Install
 
- ```bash
+ ```
  yarn add autumn-electron-ipc
  ```
- from github
-  ```bash
- yarn add https://github.com/Handiwork/autumn-electron-ipc.git
- ```
 
-## Get Started (Typescript)
-Here we'll create a renderer-to-main API, which is called from renderer process and works on main process.
+## Basic Use
 
-### Step 1: create an API interface and export the API bridge
 ```typescript
-// in shared file, can be imoported in both main and renderer process
+// define API in shared module: common
 
-export interface APIMain {
-    key: string
-    hello(...who: string[]): string
-    asyncHello(...who: string[]): Promise<string>
-    sigOk(): void
-}
+import { createR2MApiTs } from 'autumn-electron-ipc';
+import { BrowserWindow } from 'electron';
 
-// the generic type APIMain is required
-export const r2mApiTs = createR2MApiTs<APIMain>("r2m-ts")
+export const mainWindowApi = createR2MApiTs<BrowserWindow>("main-window")
+```
+
+```typescript
+// connect to impl in main process
+
+import { mainWindowApi } from "../common"; // common
+
+//...
+win = new BrowserWindow({...})
+//...
+mainWindowApi.plugInMain(win) // connect to impl
+//...
 
 ```
-### Step 2: implement API and connect with the bridge in main process
+
 ```typescript
-// in main process
+// invoke in preload script
 
-class MainServer implements APIMain {
+import { mainWindowApi } from "../common"; // common
 
-    client: ClientAPI<APIRenderer>
-    key: string = "proxy main server"
-
-    constructor(win: BrowserWindow) {
-        // this is a main process client
-        this.client = m2rApiTs.getClientFor(win.webContents)
-    }
-
-    hello(...who: string[]): string {
-        return who.join(" SYNC ")
-    }
-
-    async asyncHello(...who: string[]): Promise<string> {
-        return who.join(" ASYNC ")
-    }
-
-    async sigOk() {
-        const r = await this.client.hello(["call", "from", "main"]);
-        console.log(`client.hello(["call", "from", "main"]): ${r}`)
-    }
+function boostrap(){
+    const mainWindow = mainWindowApi.getClient()
+    setTimeout(async () => {
+        // async call
+        let maximized = await mainWindow.isMaximized() 
+        if (maximized) mainWindow.restore()
+        else mainWindow.maximize()
+    }, 1000);
 }
 ```
 
-```typescript
-// in main process
+## APIs
 
-r2mApiTs.plugInMain(new MainServer(win))
-```
-### Step 3: get and use client in renderer process
-```ts
-// in renderer process
+For use cases like 
 
-log(`tsClient.key(): ${await tsClient.key()}`)
-log(`tsClient.hello("a", "b", "c"): ${await tsClient.hello("a", "b", "c")}`)
-log(`tsClient.asyncHello("e", "f", "g"): ${await tsClient.asyncHello("e", "f", "g")}`)
-log(`tsClient.sigOk(): ${await tsClient.sigOk()}`)
-```
+- call from main process and reponse in renderer process
+- use this lib in javascript
 
-> **note**: exposed properties and functions are all transformed to async functions on the client side.
-
-### Main to renderer API
-
-Swap code location and call `createM2RApiTs()`, `plugInRenderer(...)`, `getClientFor(...)` function series instead.
-
-
-## Usage in Javascript
- [Go Home Page Here](https://handiwork.github.io/autumn-electron-ipc/)
+See -> [HomePage](https://handiwork.github.io/autumn-electron-ipc/)

@@ -1,4 +1,4 @@
-import { r2mApi, m2rApi, r2mApiTs, APIRenderer, m2rApiTs } from "../common";
+import { r2mApi, m2rApi, r2mApiTs, APIRenderer, m2rApiTs, mainWindowApi } from "../common";
 import { checkApiImpl } from '../../lib';
 
 class RendererServer implements APIRenderer {
@@ -26,4 +26,11 @@ export async function bootstrap(log: (arg: string) => void) {
     log(`tsClient.hello("a", "b", "c"): ${await tsClient.hello("a", "b", "c")}`)
     log(`tsClient.asyncHello("e", "f", "g"): ${await tsClient.asyncHello("e", "f", "g")}`)
     log(`tsClient.sigOk(): ${await tsClient.sigOk()}`)
+
+    const mainWindow = mainWindowApi.getClient()
+    setTimeout(async () => {
+        let maximized = await mainWindow.isMaximized()
+        if (maximized) mainWindow.restore()
+        else mainWindow.maximize()
+    }, 1000);
 }

@@ -1,7 +1,7 @@
 import { app, BrowserWindow } from 'electron';
 import { resolve } from 'path';
 
-import { r2mApi, m2rApi, APIMain, r2mApiTs, APIRenderer, m2rApiTs } from "../common";
+import { r2mApi, m2rApi, APIMain, r2mApiTs, APIRenderer, m2rApiTs, mainWindowApi } from "../common";
 import { checkApiImpl, ClientAPI } from '../../lib';
 
 class MainServer implements APIMain {
@@ -54,7 +54,8 @@ async function bootstrap() {
     })
     r2mApi.plugInMain(server)
     r2mApiTs.plugInMain(new MainServer(win))
-    win.maximize()
+    mainWindowApi.plugInMain(win)
+    // win.maximize()
     win.loadFile(resolve(__dirname, '../ui/index.html'))
     win.show()
 }
