@@ -1,12 +1,19 @@
 # Autumn Electron IPC
 
-Since `remote` module is going to be deprated (see -> [Deprecate the 'remote' module and move it to userland](https://github.com/electron/electron/issues/21408)), we have to use IPC calls with anonymous arguments like `ipcRenderer.invoke("main-window","set-width",960)`, where Typescript is useless. This lib confirms the type consistency between callers and callees within a Typescript (aided) environment.
+Since `remote` module is going to be deprated (see -> [Deprecate the 'remote' module and move it to userland](https://github.com/electron/electron/issues/21408)), we have to use IPC calls with anonymous arguments like `ipcRenderer.invoke("main-window","set-width",960)`, where Typescript is not that helpful. This lib confirms the type consistency between callers and callees within a Typescript (aided) environment.
+
+This lib use typescript interfaces to build IPC, so you can simply import pre-defined interfaces from other packages to work together.  
 
 ## Requirements
 -  `electron >= 7.0 `
 -  `typescript >= 3.7` (not specified as a peerdependency, but required to build with typescript or to get typing suggestions in a javascript project)
 
 ## Install
+npm
+```
+npm install autumn-electron-ipc
+```
+yarn
 
  ```
  yarn add autumn-electron-ipc
@@ -14,19 +21,18 @@ Since `remote` module is going to be deprated (see -> [Deprecate the 'remote' mo
 
 ## Basic Use
 
+define API in shared module:
 ```typescript
-// define API in shared module: common
-
 import { createR2MApiTs } from 'autumn-electron-ipc';
 import { BrowserWindow } from 'electron';
 
 export const mainWindowApi = createR2MApiTs<BrowserWindow>("main-window")
 ```
 
+connect to implemtation in main process
 ```typescript
-// connect to impl in main process
-
-import { mainWindowApi } from "../common"; // common
+// import from shared module
+import { mainWindowApi } from "../common"; 
 
 //...
 win = new BrowserWindow({...})
@@ -35,16 +41,15 @@ mainWindowApi.plugInMain(win) // connect to impl
 //...
 
 ```
-
+invoke in preload script, or in renderer script if you enabled node integration
 ```typescript
-// invoke in preload script
-
-import { mainWindowApi } from "../common"; // common
+// import from shared module
+import { mainWindowApi } from "../common"; 
 
 function boostrap(){
     const mainWindow = mainWindowApi.getClient()
     setTimeout(async () => {
-        // async call
+        // all tranformed to async call
         let maximized = await mainWindow.isMaximized() 
         if (maximized) mainWindow.restore()
         else mainWindow.maximize()

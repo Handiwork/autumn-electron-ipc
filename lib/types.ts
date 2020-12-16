@@ -67,4 +67,4 @@ type Promisify<T> = T extends TFunction<infer A, Promise<infer R>> ? T :
     T extends TFunction<infer A, infer R> ? TFunction<A, Promise<R>> :
     () => Promise<T>
 
-export type ClientAPI<T> = { [x in keyof T]: Promisify<T[x]> }
+export type Client<T> = { [x in keyof T]: Promisify<T[x]> }

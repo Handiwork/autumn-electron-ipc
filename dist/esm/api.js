@@ -7,20 +7,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { ipcMain, ipcRenderer } from "electron";
+import { ipcMain, ipcRenderer, MessageChannelMain } from "electron";
 function call(impl, prop, ...args) {
     return __awaiter(this, void 0, void 0, function* () {
         const target = impl[prop];
-        if (typeof target === "function") {
+        if (typeof target === "function")
             return target.call(impl, ...args);
-        }
-        else {
+        else
             return target;
-        }
     });
-}
-function getReplyChannel(channel) {
-    return `${channel}-${new Date().getTime()}`;
 }
 export class R2MAPI {
     constructor(channel) {
@@ -31,6 +26,7 @@ export class R2MAPI {
      * @param impl the object that implements API
      */
     plugInMain(impl) {
+        ipcMain.removeHandler(this.channel);
         ipcMain.handle(this.channel, (_, name, ...args) => __awaiter(this, void 0, void 0, function* () {
             return call(impl, name, ...args);
         }));
@@ -61,9 +57,13 @@ export class M2RAPI {
      * @param impl the object that implements API
      */
     plugInRenderer(impl) {
-        ipcRenderer.on(this.channel, (e, replayChannel, name, ...args) => __awaiter(this, void 0, void 0, function* () {
+        ipcRenderer.removeAllListeners(this.channel);
+        ipcRenderer.on(this.channel, (e, msg) => __awaiter(this, void 0, void 0, function* () {
+            const [name, ...args] = msg;
+            const [port] = e.ports;
             let result = yield call(impl, name, ...args);
-            e.sender.send(replayChannel, result);
+            port.postMessage(result);
+            port.close();
         }));
     }
     /**
@@ -74,11 +74,13 @@ export class M2RAPI {
         return new Proxy({}, {
             get: (_, prop) => {
                 return (...args) => new Promise((resolve, _) => {
-                    const replyChannel = getReplyChannel(this.channel);
-                    webContents.send(this.channel, replyChannel, prop, ...args);
-                    ipcMain.once(replyChannel, (_, result) => {
-                        resolve(result);
+                    const { port1, port2 } = new MessageChannelMain();
+                    port1.once("message", (e) => {
+                        resolve(e.data);
+                        port1.close();
                     });
+                    port1.start();
+                    webContents.postMessage(this.channel, [prop, ...args], [port2]);
                 });
             }
         });

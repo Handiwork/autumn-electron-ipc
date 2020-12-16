@@ -2,11 +2,11 @@ import { app, BrowserWindow } from 'electron';
 import { resolve } from 'path';
 
 import { r2mApi, m2rApi, APIMain, r2mApiTs, APIRenderer, m2rApiTs, mainWindowApi } from "../common";
-import { checkApiImpl, ClientAPI } from '../../lib';
+import { checkApiImpl, Client } from '../../lib';
 
 class MainServer implements APIMain {
 
-    client: ClientAPI<APIRenderer>
+    client: Client<APIRenderer>
     key: string = "proxy main server"
 
     constructor(win: BrowserWindow) {

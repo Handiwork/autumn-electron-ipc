@@ -1,5 +1,6 @@
 import { WebContents } from "electron";
-export declare class R2MAPI<S, C> {
+import { API, Client, IPCManifest } from "./types";
+export declare class R2MAPI<S> {
     private channel;
     constructor(channel: string);
     /**
@@ -10,13 +11,13 @@ export declare class R2MAPI<S, C> {
     /**
      * get renderer client
      */
-    getClient(): C;
+    getClient(): Client<S>;
 }
-export declare class R2MAPIm<S, C, M> extends R2MAPI<S, C> {
+export declare class R2MAPIm<M extends IPCManifest> extends R2MAPI<API<M>> {
     manifest: M;
     constructor(channel: string, manifest: M);
 }
-export declare class M2RAPI<S, C> {
+export declare class M2RAPI<S> {
     private channel;
     constructor(channel: string);
     /**
@@ -28,9 +29,9 @@ export declare class M2RAPI<S, C> {
      * get client for target webContents
      * @param webContents target webContents
      */
-    getClientFor(webContents: WebContents): C;
+    getClientFor(webContents: WebContents): Client<S>;
 }
-export declare class M2RAPIm<S, C, M> extends M2RAPI<S, C> {
+export declare class M2RAPIm<M extends IPCManifest> extends M2RAPI<API<M>> {
     manifest: M;
     constructor(channel: string, manifest: M);
 }

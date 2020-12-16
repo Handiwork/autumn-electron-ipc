@@ -38,7 +38,7 @@ export declare type API<T extends IPCManifest> = {
 };
 declare type TFunction<A extends any[], R> = (...args: A) => R;
 declare type Promisify<T> = T extends TFunction<infer A, Promise<infer R>> ? T : T extends TFunction<infer A, infer R> ? TFunction<A, Promise<R>> : () => Promise<T>;
-export declare type ClientAPI<T> = {
+export declare type Client<T> = {
     [x in keyof T]: Promisify<T[x]>;
 };
 export {};

@@ -14,16 +14,11 @@ const electron_1 = require("electron");
 function call(impl, prop, ...args) {
     return __awaiter(this, void 0, void 0, function* () {
         const target = impl[prop];
-        if (typeof target === "function") {
+        if (typeof target === "function")
             return target.call(impl, ...args);
-        }
-        else {
+        else
             return target;
-        }
     });
-}
-function getReplyChannel(channel) {
-    return `${channel}-${new Date().getTime()}`;
 }
 class R2MAPI {
     constructor(channel) {
@@ -34,6 +29,7 @@ class R2MAPI {
      * @param impl the object that implements API
      */
     plugInMain(impl) {
+        electron_1.ipcMain.removeHandler(this.channel);
         electron_1.ipcMain.handle(this.channel, (_, name, ...args) => __awaiter(this, void 0, void 0, function* () {
             return call(impl, name, ...args);
         }));
@@ -66,9 +62,13 @@ class M2RAPI {
      * @param impl the object that implements API
      */
     plugInRenderer(impl) {
-        electron_1.ipcRenderer.on(this.channel, (e, replayChannel, name, ...args) => __awaiter(this, void 0, void 0, function* () {
+        electron_1.ipcRenderer.removeAllListeners(this.channel);
+        electron_1.ipcRenderer.on(this.channel, (e, msg) => __awaiter(this, void 0, void 0, function* () {
+            const [name, ...args] = msg;
+            const [port] = e.ports;
             let result = yield call(impl, name, ...args);
-            e.sender.send(replayChannel, result);
+            port.postMessage(result);
+            port.close();
         }));
     }
     /**
@@ -79,11 +79,13 @@ class M2RAPI {
         return new Proxy({}, {
             get: (_, prop) => {
                 return (...args) => new Promise((resolve, _) => {
-                    const replyChannel = getReplyChannel(this.channel);
-                    webContents.send(this.channel, replyChannel, prop, ...args);
-                    electron_1.ipcMain.once(replyChannel, (_, result) => {
-                        resolve(result);
+                    const { port1, port2 } = new electron_1.MessageChannelMain();
+                    port1.once("message", (e) => {
+                        resolve(e.data);
+                        port1.close();
                     });
+                    port1.start();
+                    webContents.postMessage(this.channel, [prop, ...args], [port2]);
                 });
             }
         });

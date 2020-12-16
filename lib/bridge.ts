@@ -1,4 +1,4 @@
-import { IPCManifest, API, ClientAPI } from "./types"
+import { IPCManifest } from "./types"
 import { R2MAPIm, M2RAPIm, R2MAPI, M2RAPI } from "./api"
 
 /**
@@ -6,8 +6,8 @@ import { R2MAPIm, M2RAPIm, R2MAPI, M2RAPI } from "./api"
  * @param manifest API manifest
  * @param channel the channel to use
  */
-export function createR2MApi<T extends IPCManifest>(channel: string, manifest: T) {
-    return new R2MAPIm<API<T>, API<T>, T>(channel, manifest)
+export function createR2MApi<M extends IPCManifest>(channel: string, manifest: M) {
+    return new R2MAPIm<M>(channel, manifest)
 }
 
 /**
@@ -16,7 +16,7 @@ export function createR2MApi<T extends IPCManifest>(channel: string, manifest: T
  * @param channel the channel to use
  */
 export function createM2RApi<M extends IPCManifest>(channel: string, manifest: M) {
-    return new M2RAPIm<API<M>, API<M>, M>(channel, manifest)
+    return new M2RAPIm<M>(channel, manifest)
 }
 
 /**
@@ -26,7 +26,7 @@ export function createM2RApi<M extends IPCManifest>(channel: string, manifest: M
  * @param channel the channel to use
  */
 export function createR2MApiTs<T>(channel: string) {
-    return new R2MAPI<T, ClientAPI<T>>(channel)
+    return new R2MAPI<T>(channel)
 }
 
 /**
@@ -36,5 +36,5 @@ export function createR2MApiTs<T>(channel: string) {
  * @param channel the channel to use
  */
 export function createM2RApiTs<T>(channel: string) {
-    return new M2RAPI<T, ClientAPI<T>>(channel)
+    return new M2RAPI<T>(channel)
 }
