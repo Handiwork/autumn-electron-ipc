@@ -1,6 +1,6 @@
 {
   "name": "autumn-electron-ipc",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "looks like remote object, works as async IPC call",
   "keywords": [
     "autumn",
