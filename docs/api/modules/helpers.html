@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>autumn-electron-ipc | autumn-electron-ipc</title>
+	<title>helpers | autumn-electron-ipc</title>
 	<meta name="description" content="Documentation for autumn-electron-ipc">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">:root {
@@ -2674,7 +2674,7 @@ img {
 		<div class="container">
 			<div class="table-wrap">
 				<div class="table-cell">
-					<strong><a href="index.html">autumn-electron-ipc</a></strong>
+					<strong><a href="../index.html">autumn-electron-ipc</a></strong>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -2704,92 +2704,114 @@ img {
 </header>
 <nav class="tsd-navigation secondary">
 	<ul>
+		<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+			<a href="helpers.html#checkapiimpl" class="tsd-kind-icon">check<wbr>Api<wbr>Impl</a>
+		</li>
+		<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+			<a href="helpers.html#checkmanifest" class="tsd-kind-icon">check<wbr>Manifest</a>
+		</li>
 	</ul>
 </nav>
 <div class="container container-main">
 	<div class="content-wrap">
-		<div class="tsd-panel tsd-typography">
-			<a href="#autumn-electron-ipc" id="autumn-electron-ipc" style="color: inherit; text-decoration: none;">
-				<h1>Autumn Electron IPC</h1>
-			</a>
-			<p>Since <code>remote</code> module is going to be deprated (see -&gt; <a href="https://github.com/electron/electron/issues/21408">Deprecate the &#39;remote&#39; module and move it to userland</a>), we have to use IPC calls with anonymous arguments like <code>ipcRenderer.invoke(&quot;main-window&quot;,&quot;set-width&quot;,960)</code>, where Typescript is not that helpful. This lib confirms the type consistency between callers and callees within a Typescript (aided) environment.</p>
-			<p>This lib use typescript interfaces to build IPC, so you can simply import pre-defined interfaces from other packages to work together.  </p>
-			<a href="#requirements" id="requirements" style="color: inherit; text-decoration: none;">
-				<h2>Requirements</h2>
-			</a>
-			<ul>
-				<li> <code>electron &gt;= 7.0 </code></li>
-				<li> <code>typescript &gt;= 3.7</code> (not specified as a peerdependency, but required to build with typescript or to get typing suggestions in a javascript project)</li>
-			</ul>
-			<a href="#install" id="install" style="color: inherit; text-decoration: none;">
-				<h2>Install</h2>
-			</a>
-			<p>npm</p>
-			<pre><code><span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">install</span><span style="color: #000000"> </span><span style="color: #001080">autumn</span><span style="color: #000000">-</span><span style="color: #001080">electron</span><span style="color: #000000">-</span><span style="color: #001080">ipc</span>
-</code></pre>
-			<p>yarn</p>
-			<pre><code><span style="color: #001080">yarn</span><span style="color: #000000"> </span><span style="color: #001080">add</span><span style="color: #000000"> </span><span style="color: #001080">autumn</span><span style="color: #000000">-</span><span style="color: #001080">electron</span><span style="color: #000000">-</span><span style="color: #001080">ipc</span>
-</code></pre>
-			<a href="#basic-use" id="basic-use" style="color: inherit; text-decoration: none;">
-				<h2>Basic Use</h2>
-			</a>
-			<p>define API in shared module:</p>
-			<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">createR2MApiTs</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;autumn-electron-ipc&#039;</span><span style="color: #000000">;</span>
-<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">BrowserWindow</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;electron&#039;</span><span style="color: #000000">;</span>
-
-<span style="color: #AF00DB">export</span><span style="color: #000000"> </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">mainWindowApi</span><span style="color: #000000"> = </span><span style="color: #795E26">createR2MApiTs</span><span style="color: #000000">&lt;</span><span style="color: #267F99">BrowserWindow</span><span style="color: #000000">&gt;(</span><span style="color: #A31515">&quot;main-window&quot;</span><span style="color: #000000">)</span>
-</code></pre>
-			<p>connect to implemtation in main process</p>
-			<pre><code class="language-typescript"><span style="color: #008000">// import from shared module</span>
-<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">mainWindowApi</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;../common&quot;</span><span style="color: #000000">; </span>
-
-<span style="color: #008000">//...</span>
-<span style="color: #001080">win</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">BrowserWindow</span><span style="color: #000000">({...})</span>
-<span style="color: #008000">//...</span>
-<span style="color: #001080">mainWindowApi</span><span style="color: #000000">.</span><span style="color: #795E26">plugInMain</span><span style="color: #000000">(</span><span style="color: #001080">win</span><span style="color: #000000">) </span><span style="color: #008000">// connect to impl</span>
-<span style="color: #008000">//...</span>
-
-</code></pre>
-			<p>invoke in preload script, or in renderer script if you enabled node integration</p>
-			<pre><code class="language-typescript"><span style="color: #008000">// import from shared module</span>
-<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">mainWindowApi</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;../common&quot;</span><span style="color: #000000">; </span>
-
-<span style="color: #0000FF">function</span><span style="color: #000000"> </span><span style="color: #795E26">boostrap</span><span style="color: #000000">(){</span>
-<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">mainWindow</span><span style="color: #000000"> = </span><span style="color: #001080">mainWindowApi</span><span style="color: #000000">.</span><span style="color: #795E26">getClient</span><span style="color: #000000">()</span>
-<span style="color: #000000">    </span><span style="color: #795E26">setTimeout</span><span style="color: #000000">(</span><span style="color: #0000FF">async</span><span style="color: #000000"> () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
-<span style="color: #000000">        </span><span style="color: #008000">// all tranformed to async call</span>
-<span style="color: #000000">        </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">maximized</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">mainWindow</span><span style="color: #000000">.</span><span style="color: #795E26">isMaximized</span><span style="color: #000000">() </span>
-<span style="color: #000000">        </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">maximized</span><span style="color: #000000">) </span><span style="color: #001080">mainWindow</span><span style="color: #000000">.</span><span style="color: #795E26">restore</span><span style="color: #000000">()</span>
-<span style="color: #000000">        </span><span style="color: #AF00DB">else</span><span style="color: #000000"> </span><span style="color: #001080">mainWindow</span><span style="color: #000000">.</span><span style="color: #795E26">maximize</span><span style="color: #000000">()</span>
-<span style="color: #000000">    }, </span><span style="color: #098658">1000</span><span style="color: #000000">);</span>
-<span style="color: #000000">}</span>
-</code></pre>
-			<a href="#apis" id="apis" style="color: inherit; text-decoration: none;">
-				<h2>APIs</h2>
-			</a>
-			<p>For use cases like </p>
-			<ul>
-				<li>call from main process and reponse in renderer process</li>
-				<li>use this lib in javascript</li>
-			</ul>
-			<p>See -&gt; <a href="https://handiwork.github.io/autumn-electron-ipc/">HomePage</a></p>
-		</div>
-		<div style="position:relative;"><a name="typedoc-main-index" class="tsd-anchor"></a></div>
 		<section class="tsd-panel-group tsd-index-group">
 			<h2>Index</h2>
 			<section class="tsd-panel tsd-index-panel">
 				<div class="tsd-index-content">
 					<section class="tsd-index-section ">
-						<h3>Modules</h3>
+						<h3>Functions</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-module"><a href="modules/api.html" class="tsd-kind-icon">api</a></li>
-							<li class="tsd-kind-module"><a href="modules/bridge.html" class="tsd-kind-icon">bridge</a></li>
-							<li class="tsd-kind-module"><a href="modules/helpers.html" class="tsd-kind-icon">helpers</a></li>
-							<li class="tsd-kind-module"><a href="modules/index.html" class="tsd-kind-icon">index</a></li>
-							<li class="tsd-kind-module"><a href="modules/types.html" class="tsd-kind-icon">types</a></li>
+							<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="helpers.html#checkapiimpl" class="tsd-kind-icon">check<wbr>Api<wbr>Impl</a></li>
+							<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="helpers.html#checkmanifest" class="tsd-kind-icon">check<wbr>Manifest</a></li>
 						</ul>
 					</section>
 				</div>
+			</section>
+		</section>
+		<section class="tsd-panel-group tsd-member-group ">
+			<h2>Functions</h2>
+			<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+				<a name="checkapiimpl" class="tsd-anchor"></a>
+				<h3>check<wbr>Api<wbr>Impl</h3>
+				<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<li class="tsd-signature tsd-kind-icon">check<wbr>Api<wbr>Impl&lt;M, I&gt;<span class="tsd-signature-symbol">(</span>manifest<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">M</span>, impl<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">I</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">I</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/Handiwork/autumn-electron-ipc/blob/b135001/lib/helpers.ts#L10">helpers.ts:10</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>check implementation with manifest</p>
+							</div>
+						</div>
+						<h4 class="tsd-type-parameters-title">Type parameters</h4>
+						<ul class="tsd-type-parameters">
+							<li>
+								<h4>M<span class="tsd-signature-symbol">: </span><a href="../interfaces/types.ipcmanifest.html" class="tsd-signature-type" data-tsd-kind="Interface">IPCManifest</a></h4>
+							</li>
+							<li>
+								<h4>I<span class="tsd-signature-symbol">: </span><a href="types.html#api" class="tsd-signature-type" data-tsd-kind="Type alias">API</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">M</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							</li>
+						</ul>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>manifest: <span class="tsd-signature-type">M</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>the API manifest</p>
+								</div>
+							</li>
+							<li>
+								<h5>impl: <span class="tsd-signature-type">I</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>the implementation</p>
+								</div>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">I</span></h4>
+						<p>impl</p>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+				<a name="checkmanifest" class="tsd-anchor"></a>
+				<h3>check<wbr>Manifest</h3>
+				<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<li class="tsd-signature tsd-kind-icon">check<wbr>Manifest&lt;M&gt;<span class="tsd-signature-symbol">(</span>manifest<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">M</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">M</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/Handiwork/autumn-electron-ipc/blob/b135001/lib/helpers.ts#L18">helpers.ts:18</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>check manifest object and preserve the original type</p>
+							</div>
+						</div>
+						<h4 class="tsd-type-parameters-title">Type parameters</h4>
+						<ul class="tsd-type-parameters">
+							<li>
+								<h4>M<span class="tsd-signature-symbol">: </span><a href="../interfaces/types.ipcmanifest.html" class="tsd-signature-type" data-tsd-kind="Interface">IPCManifest</a></h4>
+							</li>
+						</ul>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>manifest: <span class="tsd-signature-type">M</span></h5>
+								<div class="tsd-comment tsd-typography">
+								</div>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">M</span></h4>
+					</li>
+				</ul>
 			</section>
 		</section>
 		<footer class="with-border-bottom">

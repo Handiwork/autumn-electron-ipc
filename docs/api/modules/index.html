@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>autumn-electron-ipc | autumn-electron-ipc</title>
+	<title>index | autumn-electron-ipc</title>
 	<meta name="description" content="Documentation for autumn-electron-ipc">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">:root {
@@ -2674,7 +2674,7 @@ img {
 		<div class="container">
 			<div class="table-wrap">
 				<div class="table-cell">
-					<strong><a href="index.html">autumn-electron-ipc</a></strong>
+					<strong><a href="../index.html">autumn-electron-ipc</a></strong>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -2704,92 +2704,149 @@ img {
 </header>
 <nav class="tsd-navigation secondary">
 	<ul>
+		<li class=" tsd-kind-reference tsd-parent-kind-module">
+			<a href="index.html#api" class="tsd-kind-icon">API</a>
+		</li>
+		<li class=" tsd-kind-reference tsd-parent-kind-module">
+			<a href="index.html#client" class="tsd-kind-icon">Client</a>
+		</li>
+		<li class=" tsd-kind-reference tsd-parent-kind-module">
+			<a href="index.html#ipcmanifest" class="tsd-kind-icon">IPCManifest</a>
+		</li>
+		<li class=" tsd-kind-reference tsd-parent-kind-module">
+			<a href="index.html#m2rapi" class="tsd-kind-icon">M2RAPI</a>
+		</li>
+		<li class=" tsd-kind-reference tsd-parent-kind-module">
+			<a href="index.html#m2rapim" class="tsd-kind-icon">M2RAPIm</a>
+		</li>
+		<li class=" tsd-kind-reference tsd-parent-kind-module">
+			<a href="index.html#r2mapi" class="tsd-kind-icon">R2MAPI</a>
+		</li>
+		<li class=" tsd-kind-reference tsd-parent-kind-module">
+			<a href="index.html#r2mapim" class="tsd-kind-icon">R2MAPIm</a>
+		</li>
+		<li class=" tsd-kind-reference tsd-parent-kind-module">
+			<a href="index.html#realtype" class="tsd-kind-icon">Real<wbr>Type</a>
+		</li>
+		<li class=" tsd-kind-reference tsd-parent-kind-module">
+			<a href="index.html#checkapiimpl" class="tsd-kind-icon">check<wbr>Api<wbr>Impl</a>
+		</li>
+		<li class=" tsd-kind-reference tsd-parent-kind-module">
+			<a href="index.html#checkmanifest" class="tsd-kind-icon">check<wbr>Manifest</a>
+		</li>
+		<li class=" tsd-kind-reference tsd-parent-kind-module">
+			<a href="index.html#createm2rapi" class="tsd-kind-icon">create<wbr>M2RApi</a>
+		</li>
+		<li class=" tsd-kind-reference tsd-parent-kind-module">
+			<a href="index.html#createm2rapits" class="tsd-kind-icon">create<wbr>M2RApi<wbr>Ts</a>
+		</li>
+		<li class=" tsd-kind-reference tsd-parent-kind-module">
+			<a href="index.html#creater2mapi" class="tsd-kind-icon">create<wbr>R2MApi</a>
+		</li>
+		<li class=" tsd-kind-reference tsd-parent-kind-module">
+			<a href="index.html#creater2mapits" class="tsd-kind-icon">create<wbr>R2MApi<wbr>Ts</a>
+		</li>
 	</ul>
 </nav>
 <div class="container container-main">
 	<div class="content-wrap">
-		<div class="tsd-panel tsd-typography">
-			<a href="#autumn-electron-ipc" id="autumn-electron-ipc" style="color: inherit; text-decoration: none;">
-				<h1>Autumn Electron IPC</h1>
-			</a>
-			<p>Since <code>remote</code> module is going to be deprated (see -&gt; <a href="https://github.com/electron/electron/issues/21408">Deprecate the &#39;remote&#39; module and move it to userland</a>), we have to use IPC calls with anonymous arguments like <code>ipcRenderer.invoke(&quot;main-window&quot;,&quot;set-width&quot;,960)</code>, where Typescript is not that helpful. This lib confirms the type consistency between callers and callees within a Typescript (aided) environment.</p>
-			<p>This lib use typescript interfaces to build IPC, so you can simply import pre-defined interfaces from other packages to work together.  </p>
-			<a href="#requirements" id="requirements" style="color: inherit; text-decoration: none;">
-				<h2>Requirements</h2>
-			</a>
-			<ul>
-				<li> <code>electron &gt;= 7.0 </code></li>
-				<li> <code>typescript &gt;= 3.7</code> (not specified as a peerdependency, but required to build with typescript or to get typing suggestions in a javascript project)</li>
-			</ul>
-			<a href="#install" id="install" style="color: inherit; text-decoration: none;">
-				<h2>Install</h2>
-			</a>
-			<p>npm</p>
-			<pre><code><span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">install</span><span style="color: #000000"> </span><span style="color: #001080">autumn</span><span style="color: #000000">-</span><span style="color: #001080">electron</span><span style="color: #000000">-</span><span style="color: #001080">ipc</span>
-</code></pre>
-			<p>yarn</p>
-			<pre><code><span style="color: #001080">yarn</span><span style="color: #000000"> </span><span style="color: #001080">add</span><span style="color: #000000"> </span><span style="color: #001080">autumn</span><span style="color: #000000">-</span><span style="color: #001080">electron</span><span style="color: #000000">-</span><span style="color: #001080">ipc</span>
-</code></pre>
-			<a href="#basic-use" id="basic-use" style="color: inherit; text-decoration: none;">
-				<h2>Basic Use</h2>
-			</a>
-			<p>define API in shared module:</p>
-			<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">createR2MApiTs</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;autumn-electron-ipc&#039;</span><span style="color: #000000">;</span>
-<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">BrowserWindow</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;electron&#039;</span><span style="color: #000000">;</span>
-
-<span style="color: #AF00DB">export</span><span style="color: #000000"> </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">mainWindowApi</span><span style="color: #000000"> = </span><span style="color: #795E26">createR2MApiTs</span><span style="color: #000000">&lt;</span><span style="color: #267F99">BrowserWindow</span><span style="color: #000000">&gt;(</span><span style="color: #A31515">&quot;main-window&quot;</span><span style="color: #000000">)</span>
-</code></pre>
-			<p>connect to implemtation in main process</p>
-			<pre><code class="language-typescript"><span style="color: #008000">// import from shared module</span>
-<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">mainWindowApi</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;../common&quot;</span><span style="color: #000000">; </span>
-
-<span style="color: #008000">//...</span>
-<span style="color: #001080">win</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">BrowserWindow</span><span style="color: #000000">({...})</span>
-<span style="color: #008000">//...</span>
-<span style="color: #001080">mainWindowApi</span><span style="color: #000000">.</span><span style="color: #795E26">plugInMain</span><span style="color: #000000">(</span><span style="color: #001080">win</span><span style="color: #000000">) </span><span style="color: #008000">// connect to impl</span>
-<span style="color: #008000">//...</span>
-
-</code></pre>
-			<p>invoke in preload script, or in renderer script if you enabled node integration</p>
-			<pre><code class="language-typescript"><span style="color: #008000">// import from shared module</span>
-<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">mainWindowApi</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;../common&quot;</span><span style="color: #000000">; </span>
-
-<span style="color: #0000FF">function</span><span style="color: #000000"> </span><span style="color: #795E26">boostrap</span><span style="color: #000000">(){</span>
-<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">mainWindow</span><span style="color: #000000"> = </span><span style="color: #001080">mainWindowApi</span><span style="color: #000000">.</span><span style="color: #795E26">getClient</span><span style="color: #000000">()</span>
-<span style="color: #000000">    </span><span style="color: #795E26">setTimeout</span><span style="color: #000000">(</span><span style="color: #0000FF">async</span><span style="color: #000000"> () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
-<span style="color: #000000">        </span><span style="color: #008000">// all tranformed to async call</span>
-<span style="color: #000000">        </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">maximized</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">mainWindow</span><span style="color: #000000">.</span><span style="color: #795E26">isMaximized</span><span style="color: #000000">() </span>
-<span style="color: #000000">        </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">maximized</span><span style="color: #000000">) </span><span style="color: #001080">mainWindow</span><span style="color: #000000">.</span><span style="color: #795E26">restore</span><span style="color: #000000">()</span>
-<span style="color: #000000">        </span><span style="color: #AF00DB">else</span><span style="color: #000000"> </span><span style="color: #001080">mainWindow</span><span style="color: #000000">.</span><span style="color: #795E26">maximize</span><span style="color: #000000">()</span>
-<span style="color: #000000">    }, </span><span style="color: #098658">1000</span><span style="color: #000000">);</span>
-<span style="color: #000000">}</span>
-</code></pre>
-			<a href="#apis" id="apis" style="color: inherit; text-decoration: none;">
-				<h2>APIs</h2>
-			</a>
-			<p>For use cases like </p>
-			<ul>
-				<li>call from main process and reponse in renderer process</li>
-				<li>use this lib in javascript</li>
-			</ul>
-			<p>See -&gt; <a href="https://handiwork.github.io/autumn-electron-ipc/">HomePage</a></p>
-		</div>
-		<div style="position:relative;"><a name="typedoc-main-index" class="tsd-anchor"></a></div>
 		<section class="tsd-panel-group tsd-index-group">
 			<h2>Index</h2>
 			<section class="tsd-panel tsd-index-panel">
 				<div class="tsd-index-content">
 					<section class="tsd-index-section ">
-						<h3>Modules</h3>
+						<h3>References</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-module"><a href="modules/api.html" class="tsd-kind-icon">api</a></li>
-							<li class="tsd-kind-module"><a href="modules/bridge.html" class="tsd-kind-icon">bridge</a></li>
-							<li class="tsd-kind-module"><a href="modules/helpers.html" class="tsd-kind-icon">helpers</a></li>
-							<li class="tsd-kind-module"><a href="modules/index.html" class="tsd-kind-icon">index</a></li>
-							<li class="tsd-kind-module"><a href="modules/types.html" class="tsd-kind-icon">types</a></li>
+							<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#api" class="tsd-kind-icon">API</a></li>
+							<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#client" class="tsd-kind-icon">Client</a></li>
+							<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#ipcmanifest" class="tsd-kind-icon">IPCManifest</a></li>
+							<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#m2rapi" class="tsd-kind-icon">M2RAPI</a></li>
+							<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#m2rapim" class="tsd-kind-icon">M2RAPIm</a></li>
+							<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#r2mapi" class="tsd-kind-icon">R2MAPI</a></li>
+							<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#r2mapim" class="tsd-kind-icon">R2MAPIm</a></li>
+							<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#realtype" class="tsd-kind-icon">Real<wbr>Type</a></li>
+							<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#checkapiimpl" class="tsd-kind-icon">check<wbr>Api<wbr>Impl</a></li>
+							<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#checkmanifest" class="tsd-kind-icon">check<wbr>Manifest</a></li>
+							<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#createm2rapi" class="tsd-kind-icon">create<wbr>M2RApi</a></li>
+							<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#createm2rapits" class="tsd-kind-icon">create<wbr>M2RApi<wbr>Ts</a></li>
+							<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#creater2mapi" class="tsd-kind-icon">create<wbr>R2MApi</a></li>
+							<li class="tsd-kind-reference tsd-parent-kind-module"><a href="index.html#creater2mapits" class="tsd-kind-icon">create<wbr>R2MApi<wbr>Ts</a></li>
 						</ul>
 					</section>
 				</div>
+			</section>
+		</section>
+		<section class="tsd-panel-group tsd-member-group ">
+			<h2>References</h2>
+			<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+				<a name="api" class="tsd-anchor"></a>
+				<h3>API</h3>
+				Re-exports <a href="types.html#api">API</a>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+				<a name="client" class="tsd-anchor"></a>
+				<h3>Client</h3>
+				Re-exports <a href="types.html#client">Client</a>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+				<a name="ipcmanifest" class="tsd-anchor"></a>
+				<h3>IPCManifest</h3>
+				Re-exports <a href="../interfaces/types.ipcmanifest.html">IPCManifest</a>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+				<a name="m2rapi" class="tsd-anchor"></a>
+				<h3>M2RAPI</h3>
+				Re-exports <a href="../classes/api.m2rapi.html">M2RAPI</a>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+				<a name="m2rapim" class="tsd-anchor"></a>
+				<h3>M2RAPIm</h3>
+				Re-exports <a href="../classes/api.m2rapim.html">M2RAPIm</a>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+				<a name="r2mapi" class="tsd-anchor"></a>
+				<h3>R2MAPI</h3>
+				Re-exports <a href="../classes/api.r2mapi.html">R2MAPI</a>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+				<a name="r2mapim" class="tsd-anchor"></a>
+				<h3>R2MAPIm</h3>
+				Re-exports <a href="../classes/api.r2mapim.html">R2MAPIm</a>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+				<a name="realtype" class="tsd-anchor"></a>
+				<h3>Real<wbr>Type</h3>
+				Re-exports <a href="types.html#realtype">RealType</a>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+				<a name="checkapiimpl" class="tsd-anchor"></a>
+				<h3>check<wbr>Api<wbr>Impl</h3>
+				Re-exports <a href="helpers.html#checkapiimpl">checkApiImpl</a>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+				<a name="checkmanifest" class="tsd-anchor"></a>
+				<h3>check<wbr>Manifest</h3>
+				Re-exports <a href="helpers.html#checkmanifest">checkManifest</a>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+				<a name="createm2rapi" class="tsd-anchor"></a>
+				<h3>create<wbr>M2RApi</h3>
+				Re-exports <a href="bridge.html#createm2rapi">createM2RApi</a>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+				<a name="createm2rapits" class="tsd-anchor"></a>
+				<h3>create<wbr>M2RApi<wbr>Ts</h3>
+				Re-exports <a href="bridge.html#createm2rapits">createM2RApiTs</a>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+				<a name="creater2mapi" class="tsd-anchor"></a>
+				<h3>create<wbr>R2MApi</h3>
+				Re-exports <a href="bridge.html#creater2mapi">createR2MApi</a>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+				<a name="creater2mapits" class="tsd-anchor"></a>
+				<h3>create<wbr>R2MApi<wbr>Ts</h3>
+				Re-exports <a href="bridge.html#creater2mapits">createR2MApiTs</a>
 			</section>
 		</section>
 		<footer class="with-border-bottom">
