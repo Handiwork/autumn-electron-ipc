@@ -2,3 +2,5 @@ api-docs/**/*
 node_modules/**/*
 test-build/**/*
 *.log
+docs
+dist
