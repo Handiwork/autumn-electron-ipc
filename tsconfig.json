@@ -5,8 +5,9 @@
     "module": "ES2020",
     "target": "ES2015",
     "lib": [
-      "ES2015",
-      "DOM"
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
     ],
     "sourceMap": true,
     "jsx": "react",

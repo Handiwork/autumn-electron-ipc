@@ -30,22 +30,20 @@
     "doc": "typedoc lib --out docs/api --theme minimal"
   },
   "devDependencies": {
-    "@babel/core": "^7.13.15",
-    "@babel/plugin-proposal-class-properties": "^7.13.0",
-    "@babel/preset-env": "^7.13.15",
+    "@types/jest": "^27.0.3",
     "@types/node": "~12",
-    "babel-loader": "^8.2.2",
-    "electron": "^9.3.1",
-    "html-webpack-plugin": "^5.3.1",
+    "eslint": "^8.4.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-jest": "^25.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.4.5",
+    "ts-jest": "^27.1.2",
     "ts-loader": "^9.0.0",
     "typedoc": "^0.21.9",
-    "typescript": "^4.4.2",
-    "webpack": "^5.34.0",
-    "webpack-cli": "^4.6.0",
-    "webpack-merge": "^5.7.3"
+    "typescript": "^4.4.2"
   },
   "peerDependencies": {
-    "electron": ">=7.0.0"
+    "electron": ">=16"
   },
   "files": [
     "dist"
