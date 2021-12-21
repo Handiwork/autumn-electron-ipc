@@ -5,12 +5,10 @@
     "module": "ES2020",
     "target": "ES2015",
     "lib": [
-      "DOM",
-      "DOM.Iterable",
       "ESNext"
     ],
     "sourceMap": true,
-    "jsx": "react",
+    "rootDir": "src",
     "moduleResolution": "node",
     "noImplicitReturns": true,
     "noImplicitThis": true,
