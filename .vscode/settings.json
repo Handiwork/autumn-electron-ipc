@@ -13,4 +13,8 @@
     "typescript",
     "html",
   ],
+  "jest.autoRun": {
+    "jest.autoRun": false,
+    "onSave": "test-only"
+  }
 }

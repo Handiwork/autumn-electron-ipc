@@ -1,20 +1,43 @@
 // Normal Types
-type TFunction<A extends any[], R> = (...args: A) => R;
+export type TFunction<A extends any[], R> = (...args: A) => R;
+// Any Function
+export type AFunction = TFunction<any, any>;
 
-type Promisify<T> = T extends TFunction<any, any>
+/**
+ * A Key whose corresponding value can be possibly transfered
+ */
+type ResolvableKey<T, x extends keyof T> = T[x] extends AFunction | symbol
   ? never
-  : T extends symbol
-  ? never
-  : Promise<T>;
+  : `$${string & x}`;
 
-type ObjectProxy<T> = {
-  [x in keyof T as `$${string & x}`]: Promisify<T[x]>;
-} & {
-  [x in keyof T]: RemoteProxy<T[x]>;
-};
+/**
+ * Key of Function
+ */
+type FunctionKey<T, x extends keyof T> = T[x] extends AFunction ? x : never;
 
-export type RemoteProxy<T> = T extends TFunction<infer A, Promise<infer R>>
-  ? TFunction<A, Promise<R>>
+/**
+ * Key of Object
+ */
+type ObjectKey<T, x extends keyof T> = T[x] extends Record<string, unknown>
+  ? x
+  : never;
+
+/**
+ * Remote Function of function {@link T}
+ */
+type RemoteFunction<T> = T extends TFunction<any, Promise<any>>
+  ? T
   : T extends TFunction<infer A, infer R>
   ? TFunction<A, Promise<R>>
-  : ObjectProxy<T>;
+  : never;
+
+/**
+ *  Remote Proxy Type of {@link T}
+ */
+export type RemoteProxy<T> = {
+  readonly [x in keyof T as ResolvableKey<T, x>]: Promise<T[x]>;
+} & {
+  [x in keyof T as ObjectKey<T, x>]: RemoteProxy<T[x]>;
+} & {
+  readonly [x in keyof T as FunctionKey<T, x>]: RemoteFunction<T[x]>;
+};
