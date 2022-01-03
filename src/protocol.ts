@@ -10,13 +10,13 @@ export interface SerializedArgs {
   callbacks: any[];
 }
 
-interface RequestBase {
+export interface RequestBase {
   key: number;
   type: string;
   path: string;
 }
 
-interface ResolveRequest extends RequestBase {
+export interface ResolveRequest extends RequestBase {
   type: "resolve";
 }
 
@@ -25,23 +25,23 @@ interface FunctionRequest extends RequestBase {
   args: SerializedArgs;
 }
 
-interface ReleaseRequest extends RequestBase {
+export interface ReleaseRequest extends RequestBase {
   type: "release";
 }
 
-type Request = ResolveRequest | FunctionRequest | ReleaseRequest;
+export type Request = ResolveRequest | FunctionRequest | ReleaseRequest;
 
-interface ResponseBase {
+export interface ResponseBase {
   ans: number;
   data?: any;
   error: any;
 }
 
-interface ResolveResponse extends ResponseBase {
+export interface ResolveResponse extends ResponseBase {
   type: "resolve-";
 }
 
-interface FunctionResponse extends ResponseBase {
+export interface FunctionResponse extends ResponseBase {
   type: "function-";
 }
 
@@ -49,13 +49,13 @@ interface ReleaseResponse extends ResponseBase {
   type: "release-";
 }
 
-type Response = ResolveResponse | FunctionResponse | ReleaseResponse;
+export type Response = ResolveResponse | FunctionResponse | ReleaseResponse;
 
-type Message = Request | Response;
+export type Message = Request | Response;
 
 export interface GPort {
   postMessage(msg: Message): void;
-  on(event: "message", listener: (msg: any) => void): void;
+  on(event: "message", listener: (msg: Message) => void): void;
 }
 
 export class Sender {
