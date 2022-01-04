@@ -162,7 +162,7 @@ export class Receiver {
     } finally {
       this.port.postMessage({
         ans: msg.key,
-        type: "function-",
+        type: "resolve-",
         data,
         error,
       });
