@@ -16,8 +16,8 @@ export default class PromiseManager {
   createPromise(init: (key: number) => void) {
     return new Promise((resolve, reject) => {
       const key = this.keyGenerator.next();
-      init(key);
       this.pendingPromises.set(key, { resolve, reject });
+      init(key);
     });
   }
 
