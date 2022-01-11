@@ -13,7 +13,7 @@ import { createProxy } from "./proxy-creator";
 
 export default class ObjectPort {
   constructor(private port: GPort) {
-    this.tmpProxyMap = new TmpProxyCreator(this);
+    this.proxyHolder = new TmpProxyCreator(this);
     port.on("message", this.dispatch);
   }
 
@@ -32,7 +32,7 @@ export default class ObjectPort {
   /**
    * Manager for temporary proxies who are in responsible to call remote callbacks.
    */
-  tmpProxyMap: TmpProxyCreator;
+  proxyHolder: TmpProxyCreator;
 
   public callResolve(path: string) {
     return this.promiseManager.createPromise((key) => {
@@ -57,34 +57,6 @@ export default class ObjectPort {
     });
   }
 
-  /**
-   * Make arguments transferable
-   * @param raw Raw arguments
-   */
-  serialize(args: any[]): SerializedArgs {
-    const callbacks: any[] = [];
-    const raw: any[] = [];
-    for (let i = 0; i < args.length; ++i) {
-      const arg = args[i];
-      switch (typeof arg) {
-        case "function":
-          callbacks.push({
-            pos: i,
-            key: this.callbackMap.put(arg),
-          });
-          raw.push(null);
-          break;
-        case "symbol":
-          throw new Error(
-            `Argument [${i}]:${String(arg)} is a symbol and not serializable`
-          );
-        default:
-          raw.push(arg);
-      }
-    }
-    return { raw, callbacks };
-  }
-
   private dispatch = (msg: Message) => {
     switch (msg.type) {
       case "resolve":
@@ -103,13 +75,17 @@ export default class ObjectPort {
     }
   };
 
-  public impl: any;
+  private objectHolder: { impl: any } = { impl: undefined };
+
+  public set impl(value: any) {
+    this.objectHolder.impl = value;
+  }
 
   private async performResolve(msg: ResolveRequest) {
     this.port.postMessage({
       ans: msg.key,
       type: "resolve-",
-      data: await get(this.impl, msg.path),
+      data: await get(this.objectHolder, msg.path),
       error: undefined,
     });
   }
@@ -119,7 +95,7 @@ export default class ObjectPort {
     let error: any;
 
     try {
-      data = await get(this.impl, msg.path)(this.deserialize(msg.args));
+      data = await get(this.objectHolder, msg.path)(this.deserialize(msg.args));
     } catch (e) {
       error = e;
     } finally {
@@ -151,13 +127,41 @@ export default class ObjectPort {
   }
 
   /**
+   * Make arguments transferable
+   * @param raw Raw arguments
+   */
+  serialize(args: any[]): SerializedArgs {
+    const callbacks: any[] = [];
+    const raw: any[] = [];
+    for (let i = 0; i < args.length; ++i) {
+      const arg = args[i];
+      switch (typeof arg) {
+        case "function":
+          callbacks.push({
+            pos: i,
+            key: this.callbackMap.put(arg),
+          });
+          raw.push(null);
+          break;
+        case "symbol":
+          throw new Error(
+            `Argument [${i}]:${String(arg)} is a symbol and not serializable`
+          );
+        default:
+          raw.push(arg);
+      }
+    }
+    return { raw, callbacks };
+  }
+
+  /**
    * Decode serialized arguments
    * @param args Serialized Arguments
    */
   deserialize(args: SerializedArgs): any[] {
     const nArgs = args.raw;
     for (const c of args.callbacks) {
-      nArgs[c.position] = this.tmpProxyMap.getOrCreate(c.key);
+      nArgs[c.position] = this.proxyHolder.getOrCreate(c.key);
     }
     return nArgs;
   }
