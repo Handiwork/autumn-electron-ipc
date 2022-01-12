@@ -34,12 +34,12 @@ describe("ObjectPort Resolve", () => {
   it("should resolve hello", async () => {
     const [op1, op2] = createObjectPorts();
     op2.impl = { hello: "hello" };
-    await expect(op1.callResolve("impl.hello")).resolves.toBe("hello");
+    await expect(op1.proxy.$hello).resolves.toBe("hello");
   });
 
   it("should resolve undefined", async () => {
     const [op1] = createObjectPorts();
-    await expect(op1.callResolve("impl.hello")).resolves.toBe(undefined);
+    await expect(op1.proxy.$hello).resolves.toBe(undefined);
   });
 });
 
@@ -47,13 +47,14 @@ describe("ObjectPort function call", () => {
   it("should resolve hello", async () => {
     const [op1, op2] = createObjectPorts();
     op2.impl = { hello: () => "hello" };
-    await expect(op1.callFunction("impl.hello", [])).resolves.toBe("hello");
+    const hello = op1.proxy.hello;
+    await expect(hello()).resolves.toBe("hello");
   });
 
   it("should throw", async () => {
     const [op1, op2] = createObjectPorts();
     op2.impl = { hello: () => "hello" };
-    await expect(op1.callFunction("impl.be", [])).rejects.toThrowError(Error);
+    await expect(op1.proxy.be()).rejects.toThrowError(Error);
   });
 
   it("should callback with jack2", async () => {
@@ -63,11 +64,8 @@ describe("ObjectPort function call", () => {
         callback(who + "2");
       },
     };
-    op1.callFunction("impl.hello", [
-      "jack",
-      (who: string) => {
-        expect(who).toBe("jack2");
-      },
-    ]);
+    op1.proxy.hello("jack", (who: string) => {
+      expect(who).toBe("jack2");
+    });
   });
 });

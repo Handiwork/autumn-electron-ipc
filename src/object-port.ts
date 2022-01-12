@@ -1,6 +1,5 @@
-import get from "lodash.get";
-import { StrongMapWithKeyCreator, WeakMapWithValueCreator } from "./holder";
-import PromiseManager, { StringKeyGenerotor } from "./promise-manager";
+import { ObjectHolder } from "./holder";
+import PromiseManager from "./promise-manager";
 import type {
   FunctionRequest,
   GPort,
@@ -9,30 +8,35 @@ import type {
   ResolveRequest,
   SerializedArgs,
 } from "./protocol";
-import { createProxy } from "./proxy-creator";
+import ProxyCreator from "./proxy-creator";
+
+const IMPL_KEY = "IMPL";
 
 export default class ObjectPort {
   constructor(private port: GPort) {
-    this.proxyHolder = new TmpProxyCreator(this);
+    this.proxyHolder = new ProxyCreator(this);
     port.on("message", this.dispatch);
   }
 
   /**
    * Proxy manager for this port.
    */
-  promiseManager = new PromiseManager();
+  private promiseManager = new PromiseManager();
 
   /**
-   * A Map holding callbacks.
+   * Manager for proxies .
    */
-  callbackMap = new StrongMapWithKeyCreator<string, any>(
-    new StringKeyGenerotor()
-  );
+  private proxyHolder: ProxyCreator;
 
-  /**
-   * Manager for temporary proxies who are in responsible to call remote callbacks.
-   */
-  proxyHolder: TmpProxyCreator;
+  public get proxy() {
+    return this.proxyHolder.getOrCreate(IMPL_KEY);
+  }
+
+  private objectHolder = new ObjectHolder();
+
+  public set impl(value: any) {
+    this.objectHolder.put(IMPL_KEY, value);
+  }
 
   public callResolve(path: string) {
     return this.promiseManager.createPromise((key) => {
@@ -75,17 +79,11 @@ export default class ObjectPort {
     }
   };
 
-  private objectHolder: { impl: any } = { impl: undefined };
-
-  public set impl(value: any) {
-    this.objectHolder.impl = value;
-  }
-
   private async performResolve(msg: ResolveRequest) {
     this.port.postMessage({
       ans: msg.key,
       type: "resolve-",
-      data: await get(this.objectHolder, msg.path),
+      data: await this.objectHolder.get(msg.path),
       error: undefined,
     });
   }
@@ -95,7 +93,7 @@ export default class ObjectPort {
     let error: any;
 
     try {
-      data = await get(this.objectHolder, msg.path)(this.deserialize(msg.args));
+      data = await this.objectHolder.get(msg.path)(this.deserialize(msg.args));
     } catch (e) {
       error = e;
     } finally {
@@ -113,7 +111,7 @@ export default class ObjectPort {
     let error: any;
 
     try {
-      data = this.callbackMap.delete(msg.path);
+      data = this.objectHolder.delete(msg.path);
     } catch (e) {
       error = e;
     } finally {
@@ -139,7 +137,7 @@ export default class ObjectPort {
         case "function":
           callbacks.push({
             pos: i,
-            key: this.callbackMap.put(arg),
+            key: this.objectHolder.post(arg),
           });
           raw.push(null);
           break;
@@ -164,14 +162,5 @@ export default class ObjectPort {
       nArgs[c.position] = this.proxyHolder.getOrCreate(c.key);
     }
     return nArgs;
-  }
-}
-
-class TmpProxyCreator extends WeakMapWithValueCreator<string, any> {
-  constructor(private op: ObjectPort) {
-    super(
-      (path) => createProxy(op, path, this),
-      (key) => op.callRelease(key)
-    );
   }
 }

@@ -2,7 +2,7 @@ import { WeakMapWithValueCreator } from "./holder";
 import type ObjectPort from "./object-port";
 
 export default class ProxyCreator extends WeakMapWithValueCreator<string, any> {
-  constructor(private op: ObjectPort) {
+  constructor(op: ObjectPort) {
     super(
       (path) => createProxy(op, path, this),
       () => undefined
@@ -10,24 +10,27 @@ export default class ProxyCreator extends WeakMapWithValueCreator<string, any> {
   }
 }
 
+const PROXY_PROTO = () => undefined;
+
 export function createProxy(
   op: ObjectPort,
-  path: string,
+  root: string,
   cache: WeakMapWithValueCreator<string, any>
 ) {
-  return new Proxy<any>(
-    {},
-    {
-      get: (target, p: string) => {
-        if (p.charAt(0) === "$") {
-          return op.callResolve(`${path}.${p.slice(1)}`);
-        } else {
-          return cache.getOrCreate(`${path}.${p}`);
-        }
-      },
-      apply: (target, thisArg, args: any[]) => {
-        return op.callFunction(path, args);
-      },
-    }
-  );
+  function propertyPath(sub: string) {
+    if (root === "") return sub;
+    return `${root}.${sub}`;
+  }
+  return new Proxy<any>(PROXY_PROTO, {
+    get: (target, p: string) => {
+      if (p.charAt(0) === "$") {
+        return op.callResolve(propertyPath(p.slice(1)));
+      } else {
+        return cache.getOrCreate(propertyPath(p));
+      }
+    },
+    apply: (target, thisArg, args: any[]) => {
+      return op.callFunction(root, args);
+    },
+  });
 }

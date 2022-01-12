@@ -1,4 +1,5 @@
-import type { IKeyGenerator } from "./promise-manager";
+import { get, set, unset } from "lodash";
+import { StringKeyGenerotor } from "./promise-manager";
 
 /**
  * A Map that holds weak reference to objects of type {@link V}.
@@ -35,55 +36,56 @@ export class WeakMapWithValueCreator<K, V extends object> {
 }
 
 /**
- * A Map that holds strong reference to objects of type {@link V}.
- *
- * A new key will be generated if an object is not stored.
+ * A holder for anonymous objects
  */
-export class StrongMapWithKeyCreator<K, V> {
-  constructor(private keyGenerator: IKeyGenerator<K>) {}
-  private back = new Map<K, V>();
-  private forward = new Map<V, K>();
+export class ObjectHolder {
+  private keyGenerator = new StringKeyGenerotor();
+  private impl: any = {};
 
   /**
-   * Add target to this holder and return the key (newly created or already existing)
-   * @param obj The object will be held
-   * @returns The key
+   * Gets the property value at path.
+   * @param path The path of the property to get.
+   * @returns The resolved value.
    */
-  public put(obj: any): K {
-    let key = this.forward.get(obj);
-    if (key) return key;
+  get(path: string) {
+    return get(this.impl, path);
+  }
 
-    key = this.keyGenerator.next();
-    this.back.set(key, obj);
-    this.forward.set(obj, key);
+  /**
+   * Mount property to this holder and return the generated key
+   * @param target The property value
+   * @returns The property key
+   */
+  post(target: any) {
+    const key = this.keyGenerator.next();
+    set(this.impl, key, target);
     return key;
   }
 
   /**
-   * Get object of key
-   * @param key Object key
-   * @returns Required Object
-   * @throws Error if not exists
+   * Sets the value at path of object. If a portion of path doesn’t exist it’s created.
+   * Arrays are created for missing index properties while objects are created for all
+   * other missing properties.
+   * @param path The path of the property to set.
+   * @param target The value to set.
    */
-  public get(key: K) {
-    const obj = this.back.get(key);
-    if (!obj) throw new Error(`key ${key} does not exist`);
-    return obj;
+  put(path: string, target: any) {
+    set(this.impl, path, target);
   }
 
   /**
-   * Delete object of key
-   * @param key Object key
-   * @throws Error if not exists
+   * Delete the property at path.
+   * @param path The path of the property to delete
+   * @returns Whether deleted.
    */
-  public delete(key: K) {
-    const obj = this.get(key);
-    this.back.delete(key);
-    this.forward.delete(obj);
+  delete(path: string) {
+    return unset(this.impl, path);
   }
 
-  public clear() {
-    this.forward.clear();
-    this.back.clear();
+  /**
+   * clear all reference to held objects.
+   */
+  clear() {
+    this.impl = {};
   }
 }

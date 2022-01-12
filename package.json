@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@types/jest": "^27.0.3",
-    "@types/lodash.get": "^4.4.6",
+    "@types/lodash": "^4.14.178",
     "@types/node": "^14.18.2",
     "@typescript-eslint/eslint-plugin": "^5.7.0",
     "eslint": "^8.4.1",
@@ -54,6 +54,6 @@
     "dist"
   ],
   "dependencies": {
-    "lodash.get": "^4.4.2"
+    "lodash": "^4.17.21"
   }
 }
