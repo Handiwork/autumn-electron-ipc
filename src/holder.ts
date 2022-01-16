@@ -13,11 +13,15 @@ export class WeakMapWithValueCreator<K, V extends object> {
    * @param create Creator for new {@link V} for key of Type {@link K}.
    * @param finalization Callback that will be called when a weak-referenced object is reclaimed.
    */
-  constructor(private create: (key: K) => V, finalization: (key: K) => void) {
-    this.registry = new FinalizationRegistry(finalization);
-  }
+  constructor(
+    private create: (key: K) => V,
+    private finalization: (key: K) => void
+  ) {}
   private map = new Map<K, WeakRef<V>>();
-  private registry: FinalizationRegistry<K>;
+  /**
+   * Internal interval. It is of type any because it's different from node to browser
+   */
+  private interval: any;
 
   /**
    * Get or create object of this key
@@ -30,8 +34,31 @@ export class WeakMapWithValueCreator<K, V extends object> {
 
     const nIns = this.create(key);
     this.map.set(key, new WeakRef(nIns));
-    this.registry.register(nIns, key);
     return nIns;
+  }
+
+  public tryGC = () => {
+    for (const [k, v] of this.map) {
+      if (v.deref() === null) {
+        this.finalization?.call(k);
+      }
+    }
+  };
+
+  /**
+   * Start continously garbage collecting.
+   */
+  public startCGC() {
+    this.stopCGC();
+    this.interval = setInterval(this.tryGC, 5000);
+  }
+
+  /**
+   * Stop continously garbage collecting.
+   */
+  public stopCGC() {
+    const timer = this.interval;
+    if (timer) clearInterval(timer);
   }
 }
 

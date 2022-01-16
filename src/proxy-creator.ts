@@ -5,12 +5,10 @@ export default class ProxyCreator extends WeakMapWithValueCreator<string, any> {
   constructor(op: ObjectPort) {
     super(
       (path) => createProxy(op, path, this),
-      () => undefined
+      (key) => op.callRelease(key)
     );
   }
 }
-
-const PROXY_PROTO = () => undefined;
 
 export function createProxy(
   op: ObjectPort,
@@ -21,7 +19,7 @@ export function createProxy(
     if (root === "") return sub;
     return `${root}.${sub}`;
   }
-  return new Proxy<any>(PROXY_PROTO, {
+  return new Proxy<any>(Function, {
     get: (target, p: string) => {
       if (p.charAt(0) === "$") {
         return op.callResolve(propertyPath(p.slice(1)));

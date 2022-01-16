@@ -39,6 +39,9 @@ describe("Object Holder", () => {
     const obj = new String("obj");
     const key = map.post(obj);
     expect(map.get(key)).toBe(obj);
+    const obj2 = new String("obj2");
+    map.put(key, obj2);
+    expect(map.get(key)).toBe(obj2);
     expect(map.delete(key)).toBe(true);
   });
 });
