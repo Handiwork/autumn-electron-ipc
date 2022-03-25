@@ -937,7 +937,12 @@
   resolved "https://registry.nlark.com/@types/node/download/@types/node-16.7.6.tgz?cache=0&sync_timestamp=1630253006705&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40types%2Fnode%2Fdownload%2F%40types%2Fnode-16.7.6.tgz#8666478db8095aa66e25b7e469f3e7b53ea2855e"
   integrity sha1-hmZHjbgJWqZuJbfkafPntT6ihV4=
 
-"@types/node@^12.0.12", "@types/node@~12":
+"@types/node@^14.6.2":
+  version "14.18.12"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.18.12.tgz#0d4557fd3b94497d793efd4e7d92df2f83b4ef24"
+  integrity sha512-q4jlIR71hUpWTnGhXWcakgkZeHa3CCjcQcnuzU8M891BAWA2jHiziiWEPEkdS5pFsz7H9HJiy8BrK7tBRNrY7A==
+
+"@types/node@~12":
   version "12.20.21"
   resolved "https://registry.nlark.com/@types/node/download/@types/node-12.20.21.tgz?cache=0&sync_timestamp=1630253006705&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40types%2Fnode%2Fdownload%2F%40types%2Fnode-12.20.21.tgz#575e91f59c2e79318c2d39a48286c6954e484fd5"
   integrity sha1-V16R9ZwueTGMLTmkgobGlU5IT9U=
@@ -1525,13 +1530,13 @@ electron-to-chromium@^1.3.811:
   resolved "https://registry.nlark.com/electron-to-chromium/download/electron-to-chromium-1.3.822.tgz#7036edc7f669b0aa79e9801dc5f56866c6ddc0b2"
   integrity sha1-cDbtx/ZpsKp56YAdxfVoZsbdwLI=
 
-electron@^9.3.1:
-  version "9.4.4"
-  resolved "https://registry.nlark.com/electron/download/electron-9.4.4.tgz?cache=0&sync_timestamp=1630097485354&other_urls=https%3A%2F%2Fregistry.nlark.com%2Felectron%2Fdownload%2Felectron-9.4.4.tgz#2a74a0655a74bd326216672c5ae6ed3a44451446"
-  integrity sha1-KnSgZVp0vTJiFmcsWubtOkRFFEY=
+electron@^13.6.6:
+  version "13.6.6"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-13.6.6.tgz#ebd4754b2b55d54a2e8e9cdc3d0a2bb6b7053827"
+  integrity sha512-TP2Bl1nTxaH1yRmlYiF7imzvKE/NASE0cl6wOYA3AaP/UrBGc4L3NwJfn5Z55o+1t4TH8vCRxENufESyb32HhA==
   dependencies:
     "@electron/get" "^1.0.1"
-    "@types/node" "^12.0.12"
+    "@types/node" "^14.6.2"
     extract-zip "^1.0.3"
 
 emojis-list@^3.0.0:
