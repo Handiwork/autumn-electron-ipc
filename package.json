@@ -35,7 +35,7 @@
     "@babel/preset-env": "^7.13.15",
     "@types/node": "~12",
     "babel-loader": "^8.2.2",
-    "electron": "^9.3.1",
+    "electron": "^15.5.5",
     "html-webpack-plugin": "^5.3.1",
     "ts-loader": "^9.0.0",
     "typedoc": "^0.21.9",
