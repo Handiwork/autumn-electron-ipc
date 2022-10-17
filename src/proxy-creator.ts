@@ -1,7 +1,7 @@
 import { WeakMapWithValueCreator } from "./holder";
 import type ObjectPort from "./object-port";
 
-export default class ProxyCreator extends WeakMapWithValueCreator<string, any> {
+export default class ProxyManager extends WeakMapWithValueCreator<string, any> {
   constructor(op: ObjectPort) {
     super(
       (path) => createProxy(op, path, this),

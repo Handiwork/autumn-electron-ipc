@@ -18,11 +18,11 @@ export interface FunctionRequest extends RequestBase {
   args: SerializedArgs;
 }
 
-export interface ReleaseRequest extends RequestBase {
-  type: "release";
+export interface UnmountRequest extends RequestBase {
+  type: "unmount";
 }
 
-export type Request = ResolveRequest | FunctionRequest | ReleaseRequest;
+export type Request = ResolveRequest | FunctionRequest | UnmountRequest;
 
 export interface ResponseBase {
   ans: number;
@@ -38,11 +38,11 @@ export interface FunctionResponse extends ResponseBase {
   type: "function-";
 }
 
-export interface ReleaseResponse extends ResponseBase {
-  type: "release-";
+export interface UnmountResponse extends ResponseBase {
+  type: "unmount-";
 }
 
-export type Response = ResolveResponse | FunctionResponse | ReleaseResponse;
+export type Response = ResolveResponse | FunctionResponse | UnmountResponse;
 
 export type Message = Request | Response;
 

@@ -4,17 +4,20 @@ import type {
   FunctionRequest,
   GPort,
   Message,
-  ReleaseRequest,
+  UnmountRequest,
   ResolveRequest,
   SerializedArgs,
 } from "./protocol";
-import ProxyCreator from "./proxy-creator";
+import ProxyManager from "./proxy-creator";
 
 const IMPL_KEY = "IMPL";
 
+/**
+ * Wrapper for {@link GPort}, make it able to delegate function arguments.
+ */
 export default class ObjectPort {
   constructor(private port: GPort) {
-    this.proxyHolder = new ProxyCreator(this);
+    this.proxyHolder = new ProxyManager(this);
     port.on("message", this.dispatch);
   }
 
@@ -26,7 +29,7 @@ export default class ObjectPort {
   /**
    * Manager for proxies .
    */
-  private proxyHolder: ProxyCreator;
+  private proxyHolder: ProxyManager;
 
   public get proxy() {
     return this.proxyHolder.getOrCreate(IMPL_KEY);
@@ -57,7 +60,7 @@ export default class ObjectPort {
 
   public callRelease(path: string) {
     return this.promiseManager.createPromise((key) => {
-      return this.port.postMessage({ key, type: "release", path });
+      return this.port.postMessage({ key, type: "unmount", path });
     });
   }
 
@@ -69,12 +72,12 @@ export default class ObjectPort {
       case "function":
         this.performFunction(msg);
         break;
-      case "release":
+      case "unmount":
         this.performRelease(msg);
         break;
       case "function-":
       case "resolve-":
-      case "release-":
+      case "unmount-":
         this.promiseManager.completePromise(msg.ans, msg.error, msg.data);
     }
   };
@@ -106,7 +109,7 @@ export default class ObjectPort {
     }
   }
 
-  performRelease(msg: ReleaseRequest) {
+  performRelease(msg: UnmountRequest) {
     let data: any;
     let error: any;
 
@@ -117,7 +120,7 @@ export default class ObjectPort {
     } finally {
       this.port.postMessage({
         ans: msg.key,
-        type: "release-",
+        type: "unmount-",
         data,
         error,
       });
@@ -126,7 +129,7 @@ export default class ObjectPort {
 
   /**
    * Make arguments transferable
-   * @param raw Raw arguments
+   * @param args Raw arguments
    */
   serialize(args: any[]): SerializedArgs {
     const callbacks: any[] = [];
@@ -143,7 +146,9 @@ export default class ObjectPort {
           break;
         case "symbol":
           throw new Error(
-            `Argument [${i}]:${String(arg)} is a symbol and not serializable`
+            `Argument [${i}]:${String(
+              arg
+            )} is a symbol that can not be serialized`
           );
         default:
           raw.push(arg);

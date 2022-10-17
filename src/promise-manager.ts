@@ -1,3 +1,6 @@
+import type { IKeyGenerator } from "./key-generator";
+import { KeyGenerator } from "./key-generator";
+
 type TPromise = {
   resolve: (v: any) => void;
   reject: (e: any) => void;
@@ -24,27 +27,14 @@ export default class PromiseManager {
   completePromise(key: number, err: any, data: any) {
     const promise = this.pendingPromises.get(key);
     if (!promise) return;
+    this.pendingPromises.delete(key);
     if (err) promise.reject(err);
     else promise.resolve(data);
   }
-}
 
-export interface IKeyGenerator<T> {
-  next(): T;
-}
-
-export class KeyGenerator {
-  private current = 0;
-  next() {
-    this.current = (this.current + 1) % Number.MAX_SAFE_INTEGER;
-    return this.current;
-  }
-}
-
-export class StringKeyGenerotor implements IKeyGenerator<string> {
-  private current = 0;
-  next() {
-    this.current = (this.current + 1) % Number.MAX_SAFE_INTEGER;
-    return this.current.toString();
+  rejectAll() {
+    Array.from(this.pendingPromises.keys()).forEach((k) =>
+      this.completePromise(k, "abandoned", undefined)
+    );
   }
 }

@@ -1,5 +1,5 @@
 import { get, set, unset } from "lodash";
-import { StringKeyGenerotor } from "./promise-manager";
+import { StringKeyGenerotor } from "./key-generator";
 
 /**
  * A Map that holds weak reference to objects of type {@link V}.
@@ -16,12 +16,13 @@ export class WeakMapWithValueCreator<K, V extends object> {
   constructor(
     private create: (key: K) => V,
     private finalization: (key: K) => void
-  ) {}
-  private map = new Map<K, WeakRef<V>>();
-  /**
-   * Internal interval. It is of type any because it's different from node to browser
-   */
-  private interval: any;
+  ) {
+    this.#registry = new FinalizationRegistry(this.finalization);
+  }
+
+  #map = new Map<K, WeakRef<V>>();
+
+  #registry: FinalizationRegistry<K>;
 
   /**
    * Get or create object of this key
@@ -29,36 +30,13 @@ export class WeakMapWithValueCreator<K, V extends object> {
    * @returns Value that already exists or was newly created.
    */
   public getOrCreate(key: K): V {
-    const ins = this.map.get(key)?.deref();
+    const ins = this.#map.get(key)?.deref();
     if (ins) return ins;
 
     const nIns = this.create(key);
-    this.map.set(key, new WeakRef(nIns));
+    this.#map.set(key, new WeakRef(nIns));
+    this.#registry.register(nIns, key);
     return nIns;
-  }
-
-  public tryGC = () => {
-    for (const [k, v] of this.map) {
-      if (v.deref() === null) {
-        this.finalization?.call(k);
-      }
-    }
-  };
-
-  /**
-   * Start continously garbage collecting.
-   */
-  public startCGC() {
-    this.stopCGC();
-    this.interval = setInterval(this.tryGC, 5000);
-  }
-
-  /**
-   * Stop continously garbage collecting.
-   */
-  public stopCGC() {
-    const timer = this.interval;
-    if (timer) clearInterval(timer);
   }
 }
 
