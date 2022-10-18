@@ -1,4 +1,4 @@
-import { ObjectHolder } from "./holder";
+import { ObjectHolder } from "./object-holder";
 import PromiseManager from "./promise-manager";
 import type {
   FunctionRequest,
@@ -8,14 +8,26 @@ import type {
   ResolveRequest,
   SerializedArgs,
 } from "./protocol";
-import ProxyManager from "./proxy-creator";
+import ProxyManager from "./proxy-manager";
 
 const IMPL_KEY = "IMPL";
+
+export interface Sender {
+  callResolve<T>(path: string): Promise<T>;
+  callRelease(path: string): Promise<boolean>;
+  callFunction<T>(path: string, args: any[]): Promise<T>;
+}
+
+export interface Receiver {
+  performResolve(msg: ResolveRequest): Promise<void>;
+  performFunction(msg: FunctionRequest): Promise<void>;
+  performRelease(msg: UnmountRequest): void;
+}
 
 /**
  * Wrapper for {@link GPort}, make it able to delegate function arguments.
  */
-export default class ObjectPort {
+export default class ObjectPort implements Sender, Receiver {
   constructor(private port: GPort) {
     this.proxyHolder = new ProxyManager(this);
     port.on("message", this.dispatch);
@@ -41,13 +53,13 @@ export default class ObjectPort {
     this.objectHolder.put(IMPL_KEY, value);
   }
 
-  public callResolve(path: string) {
+  public callResolve<T>(path: string) {
     return this.promiseManager.createPromise((key) => {
       this.port.postMessage({ key, type: "resolve", path });
-    });
+    }) as Promise<T>;
   }
 
-  public callFunction(path: string, args: any[]) {
+  public callFunction<T>(path: string, args: any[]) {
     return this.promiseManager.createPromise((key) => {
       this.port.postMessage({
         key,
@@ -55,13 +67,13 @@ export default class ObjectPort {
         path,
         args: this.serialize(args),
       });
-    });
+    }) as Promise<T>;
   }
 
   public callRelease(path: string) {
     return this.promiseManager.createPromise((key) => {
       return this.port.postMessage({ key, type: "unmount", path });
-    });
+    }) as Promise<boolean>;
   }
 
   private dispatch = (msg: Message) => {
@@ -82,7 +94,7 @@ export default class ObjectPort {
     }
   };
 
-  private async performResolve(msg: ResolveRequest) {
+  async performResolve(msg: ResolveRequest) {
     this.port.postMessage({
       ans: msg.key,
       type: "resolve-",
@@ -91,7 +103,7 @@ export default class ObjectPort {
     });
   }
 
-  private async performFunction(msg: FunctionRequest) {
+  async performFunction(msg: FunctionRequest) {
     let data: any;
     let error: any;
 
@@ -140,7 +152,7 @@ export default class ObjectPort {
         case "function":
           callbacks.push({
             pos: i,
-            key: this.objectHolder.post(arg),
+            key: this.objectHolder.hold(arg),
           });
           raw.push(null);
           break;

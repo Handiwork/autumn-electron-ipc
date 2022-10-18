@@ -16,5 +16,6 @@
   "jest.autoRun": {
     "jest.autoRun": false,
     "onSave": "test-only"
-  }
+  },
+  "jest.jestCommandLine": "node --expose-gc --allow-natives-syntax ./node_modules/jest-cli/bin/jest.js",
 }
