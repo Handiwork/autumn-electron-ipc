@@ -4,10 +4,12 @@ import { StringKeyGenerotor } from "./key-generator";
 /**
  * A holder for anonymous objects
  */
-export class ObjectHolder {
+export default class ObjectHolder {
   #keyGenerator = new StringKeyGenerotor();
-  #impl: any = {};
+  #container: any = {};
   #inversedMap = new Map<any, string>();
+
+  constructor(private mainKey: string) {}
 
   /**
    * Gets the property value at path.
@@ -15,7 +17,7 @@ export class ObjectHolder {
    * @returns The resolved value.
    */
   get(path: string) {
-    return get(this.#impl, path);
+    return get(this.#container, path);
   }
 
   /**
@@ -28,7 +30,7 @@ export class ObjectHolder {
     if (held) return held;
     const key = this.#keyGenerator.next();
     this.#inversedMap.set(target, key);
-    set(this.#impl, key, target);
+    set(this.#container, key, target);
     return key;
   }
 
@@ -40,7 +42,7 @@ export class ObjectHolder {
    * @param target The value to set.
    */
   put(path: string, target: any) {
-    set(this.#impl, path, target);
+    set(this.#container, path, target);
   }
 
   /**
@@ -49,15 +51,19 @@ export class ObjectHolder {
    * @returns Whether deleted.
    */
   delete(path: string) {
-    const target = get(this.#impl, path);
+    const target = get(this.#container, path);
     if (target) this.#inversedMap.delete(target);
-    return unset(this.#impl, path);
+    return unset(this.#container, path);
   }
 
   /**
    * clear all reference to held objects.
    */
   clear() {
-    this.#impl = {};
+    this.#container = {};
+  }
+
+  setDefault(impl: any) {
+    this.put(this.mainKey, impl);
   }
 }

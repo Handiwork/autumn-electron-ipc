@@ -1,16 +1,14 @@
-import { ObjectHolder } from "./object-holder";
+import ObjectHolder from "./object-holder";
 import PromiseManager from "./promise-manager";
 import type {
   FunctionRequest,
   GPort,
   Message,
-  UnmountRequest,
   ResolveRequest,
   SerializedArgs,
+  UnmountRequest,
 } from "./protocol";
 import ProxyManager from "./proxy-manager";
-
-const IMPL_KEY = "IMPL";
 
 export interface Sender {
   callResolve<T>(path: string): Promise<T>;
@@ -27,31 +25,19 @@ export interface Receiver {
 /**
  * Wrapper for {@link GPort}, make it able to delegate function arguments.
  */
-export default class ObjectPort implements Sender, Receiver {
-  constructor(private port: GPort) {
-    this.proxyHolder = new ProxyManager(this);
-    port.on("message", this.dispatch);
+export class ObjectPort implements Sender, Receiver {
+  constructor(
+    private port: GPort,
+    public readonly proxyManager: ProxyManager,
+    public readonly objectHolder: ObjectHolder
+  ) {
+    port.on("message", this.dispatch.bind(this));
   }
 
   /**
    * Proxy manager for this port.
    */
   private promiseManager = new PromiseManager();
-
-  /**
-   * Manager for proxies .
-   */
-  private proxyHolder: ProxyManager;
-
-  public get proxy() {
-    return this.proxyHolder.getOrCreate(IMPL_KEY);
-  }
-
-  private objectHolder = new ObjectHolder();
-
-  public set impl(value: any) {
-    this.objectHolder.put(IMPL_KEY, value);
-  }
 
   public callResolve<T>(path: string) {
     return this.promiseManager.createPromise((key) => {
@@ -108,7 +94,9 @@ export default class ObjectPort implements Sender, Receiver {
     let error: any;
 
     try {
-      data = await this.objectHolder.get(msg.path)(this.deserialize(msg.args));
+      data = await this.objectHolder.get(msg.path)(
+        ...this.deserialize(msg.args)
+      );
     } catch (e) {
       error = e;
     } finally {
@@ -176,8 +164,18 @@ export default class ObjectPort implements Sender, Receiver {
   deserialize(args: SerializedArgs): any[] {
     const nArgs = args.raw;
     for (const c of args.callbacks) {
-      nArgs[c.position] = this.proxyHolder.getOrCreate(c.key);
+      nArgs[c.pos] = this.proxyManager.getOrCreate(c.key);
     }
     return nArgs;
   }
+}
+
+export function createManagedObjectPort(port: GPort, mainKey: string) {
+  const proxyManager = new ProxyManager(mainKey);
+  const objectHolder = new ObjectHolder(mainKey);
+
+  const op = new ObjectPort(port, proxyManager, objectHolder);
+  proxyManager.sender = op;
+
+  return op;
 }

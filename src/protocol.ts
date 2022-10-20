@@ -1,6 +1,6 @@
 export interface SerializedArgs {
   raw: any[];
-  callbacks: any[];
+  callbacks: { pos: number; key: string }[];
 }
 
 export interface RequestBase {

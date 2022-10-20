@@ -9,9 +9,12 @@ function buildPath(base: string, target: string) {
  * Manager for proxies. This manager is responsible for creating and weakly holding proxies.
  */
 export default class ProxyManager {
-  constructor(private sender: Sender) {
-    this.#registry = new FinalizationRegistry((key) => sender.callRelease(key));
+  constructor(private mainKey: string) {
+    this.#registry = new FinalizationRegistry((key) =>
+      this.sender.callRelease(key)
+    );
   }
+  sender: Sender;
 
   #createProxy(path: string) {
     return new Proxy<any>(Function, {
@@ -45,5 +48,9 @@ export default class ProxyManager {
     this.#map.set(key, new WeakRef(nIns));
     this.#registry.register(nIns, key);
     return nIns;
+  }
+
+  getDefault() {
+    return this.getOrCreate(this.mainKey);
   }
 }

@@ -1,6 +1,6 @@
-import { ObjectHolder } from "./object-holder";
+import ObjectHolder from "./object-holder";
 
-const map = new ObjectHolder();
+const map = new ObjectHolder("IMPL");
 
 beforeEach(() => {
   map.clear();

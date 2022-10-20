@@ -3,7 +3,8 @@ import ProxyManager from "./proxy-manager";
 describe("created proxies", () => {
   it("created proxies should call sender's callResolve", () => {
     const testPath = "sample-path";
-    const manager = new ProxyManager({
+    const manager = new ProxyManager("IMPL");
+    manager.sender = {
       async callResolve(path) {
         expect(path).toBe(testPath);
         return null as any;
@@ -14,7 +15,7 @@ describe("created proxies", () => {
       async callRelease() {
         throw "Unimplemented";
       },
-    });
+    };
 
     const proxy = manager.getOrCreate("");
     proxy["$" + testPath];
@@ -22,7 +23,8 @@ describe("created proxies", () => {
 
   it("created proxies should call sender's callFunction", () => {
     const testPath = "sample-path";
-    const manager = new ProxyManager({
+    const manager = new ProxyManager("IMPL");
+    manager.sender = {
       async callResolve() {
         throw "Unimplemented";
       },
@@ -33,7 +35,7 @@ describe("created proxies", () => {
       async callRelease() {
         throw "Unimplemented";
       },
-    });
+    };
 
     const proxy = manager.getOrCreate(testPath);
     proxy();
@@ -45,7 +47,8 @@ describe("created proxies", () => {
 
   it("proxy should be able to generate sub proxy", () => {
     const testPath = "to.sample.path";
-    const manager = new ProxyManager({
+    const manager = new ProxyManager("IMPL");
+    manager.sender = {
       async callResolve(path) {
         expect(path).toBe(testPath);
         return null as any;
@@ -56,23 +59,13 @@ describe("created proxies", () => {
       async callRelease() {
         throw "Unimplemented";
       },
-    });
+    };
     const root: any = manager.getOrCreate("");
     root.to.some.path;
   });
 
   it("cache should work", () => {
-    const manager = new ProxyManager({
-      async callResolve() {
-        throw "Unimplemented";
-      },
-      async callFunction() {
-        throw "Unimplemented";
-      },
-      async callRelease() {
-        throw "Unimplemented";
-      },
-    });
+    const manager = new ProxyManager("IMPL");
     const p1 = manager.getOrCreate("");
     expect(manager.getOrCreate("")).toBe(p1);
   });
