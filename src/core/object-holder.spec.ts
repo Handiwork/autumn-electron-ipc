@@ -1,4 +1,4 @@
-import ObjectHolder from "./object-holder";
+import { ObjectHolder } from "./object-holder";
 
 const map = new ObjectHolder("IMPL");
 

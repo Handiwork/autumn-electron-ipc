@@ -4,7 +4,7 @@ import { StringKeyGenerotor } from "./key-generator";
 /**
  * A holder for anonymous objects
  */
-export default class ObjectHolder {
+export class ObjectHolder {
   #keyGenerator = new StringKeyGenerotor();
   #container: any = {};
   #inversedMap = new Map<any, string>();

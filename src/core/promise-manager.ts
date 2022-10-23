@@ -1,7 +1,7 @@
 import type { IKeyGenerator } from "./key-generator";
 import { KeyGenerator } from "./key-generator";
 
-type TPromise = {
+export type TPromise = {
   resolve: (v: any) => void;
   reject: (e: any) => void;
 };
@@ -9,7 +9,7 @@ type TPromise = {
 /**
  * PromiseManger in charge of creating and resolving {@link Promise}s
  */
-export default class PromiseManager {
+export class PromiseManager {
   constructor(
     private keyGenerator: IKeyGenerator<number> = new KeyGenerator()
   ) {}

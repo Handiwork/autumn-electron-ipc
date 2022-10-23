@@ -8,7 +8,7 @@ function buildPath(base: string, target: string) {
 /**
  * Manager for proxies. This manager is responsible for creating and weakly holding proxies.
  */
-export default class ProxyManager {
+export class ProxyManager {
   constructor(private mainKey: string) {
     this.#registry = new FinalizationRegistry((key) =>
       this.sender.callRelease(key)

@@ -5,7 +5,8 @@
     "module": "ES2020",
     "target": "ES2015",
     "lib": [
-      "ESNext"
+      "ESNext",
+      "DOM",
     ],
     "sourceMap": true,
     "rootDir": "src",
@@ -21,6 +22,7 @@
     "node_modules/**/*",
     "test-build/**/*",
     "dist/**/*",
-    "api-docs/**/*"
+    "api-docs/**/*",
+    "examples/**/*"
   ]
 }

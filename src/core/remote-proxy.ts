@@ -2,6 +2,7 @@
  *  Type for Remote Proxy of {@link T}
  *
  *  @example
+ *  ```ts
  *  const sample = {
  *    a: 1,
  *    b(k: number, s: string) {
@@ -15,6 +16,7 @@
  *  };
  *  const proxy: RemoteProxy<typeof sample> = new Proxy<any>({}, {});
  *  proxy.d.$f; // Promise<number>
+ * ```
  */
 export type RemoteProxy<T> = Resolver<T> &
   ProxyGetter<T> &
@@ -23,42 +25,44 @@ export type RemoteProxy<T> = Resolver<T> &
 /**
  * Resolvable properties set as getter.
  */
-type Resolver<T> = {
+export type Resolver<T> = {
   readonly [x in keyof T as $ResolvableKey<T, x>]: Promise<T[x]>;
 };
 
 /**
  * A Key whose corresponding value can be possibly transfered, start with '$'
  */
-type $ResolvableKey<T, x extends keyof T> = T[x] extends AFunction | symbol
+export type $ResolvableKey<T, x extends keyof T> = T[x] extends
+  | AFunction
+  | symbol
   ? never
   : `$${x & string}`;
 
 /**
  * Getter for sub-proxies
  */
-type ProxyGetter<T> = {
+export type ProxyGetter<T> = {
   readonly [x in keyof T as ObjectKey<T, x>]: RemoteProxy<T[x]>;
 };
 
 /**
  * Key of Object
  */
-type ObjectKey<T, x extends keyof T> = T[x] extends Record<string, unknown>
-  ? x
-  : never;
+export type ObjectKey<T, x extends keyof T> = T[x] extends object ? x : never;
 
 /**
  * Getter for remote functions
  */
-type RemoteFunctionGetter<T> = {
+export type RemoteFunctionGetter<T> = {
   readonly [x in keyof T as FunctionKey<T, x>]: RemoteFunction<T[x]>;
 };
 
 /**
  * Key of Function
  */
-type FunctionKey<T, x extends keyof T> = T[x] extends AFunction ? x : never;
+export type FunctionKey<T, x extends keyof T> = T[x] extends AFunction
+  ? x
+  : never;
 
 /**
  * Any function
@@ -73,7 +77,7 @@ export type TFunction<A extends any[], R> = (...args: A) => R;
 /**
  * Remote form of function {@link F}
  */
-type RemoteFunction<F> = F extends TFunction<infer A, infer R>
+export type RemoteFunction<F> = F extends TFunction<infer A, infer R>
   ? TFunction<A, PromiseValue<R>>
   : never;
 

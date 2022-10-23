@@ -1,5 +1,5 @@
 import { KeyGenerator } from "./key-generator";
-import PromiseManager from "./promise-manager";
+import { PromiseManager } from "./promise-manager";
 
 it("should return a promise when calling createPromise", () => {
   const promiseManager = new PromiseManager();

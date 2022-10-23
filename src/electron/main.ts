@@ -1,22 +1,27 @@
 import type { WebContents } from "electron";
 import { ipcMain, MessageChannelMain } from "electron";
-import ObjectHolder from "src/object-holder";
-import { ObjectPort } from "src/object-port";
-import ProxyManager from "src/proxy-manager";
-import type { RemoteProxy } from "src/remote-proxy";
-import { buildChannelName } from "./constants";
-import { createGPort } from "./port";
+import { ObjectHolder } from "../core/object-holder";
+import { ObjectPort } from "../core/object-port";
+import type { Message } from "../core/protocol";
+import { ProxyManager } from "../core/proxy-manager";
+import type { RemoteProxy } from "../core/remote-proxy";
+import { buildChannelName, MAIN_KEY } from "./constants";
 
-type ConnectListener = (webContents: WebContents, port: ObjectPort) => void;
+export type ConnectListener = (
+  webContents: WebContents,
+  port: ObjectPort
+) => void;
 
 /**
  * IPC Server running in main thread.
+ * @param L local Type
+ * @param R remote type
  */
-export default class IPCServer<L, R> {
+export class IPCServer<L, R> {
   #ports = new Map<WebContents, ObjectPort>();
   #channelName: string;
   #listener?: ConnectListener;
-  #holder: ObjectHolder;
+  #holder = new ObjectHolder(MAIN_KEY);
 
   /**
    * Create server.
@@ -30,13 +35,19 @@ export default class IPCServer<L, R> {
    * Start accepting channel establishing request.
    */
   listen() {
-    ipcMain.on(this.#channelName, (event, mainKey: string) => {
+    ipcMain.on(this.#channelName, (event) => {
       const sender = event.sender;
-      const { port1, port2 } = new MessageChannelMain();
+      const { port1: nativePort, port2 } = new MessageChannelMain();
 
-      const gport = createGPort(port1);
-      this.#holder = new ObjectHolder(mainKey);
-      const proxyManager = new ProxyManager(mainKey);
+      const gport = {
+        postMessage(msg: Message): void {
+          nativePort.postMessage(msg);
+        },
+        on(event: "message", listener: (msg: Message) => void): void {
+          nativePort.on(event, (e) => listener(e.data));
+        },
+      };
+      const proxyManager = new ProxyManager(MAIN_KEY);
       const op = new ObjectPort(gport, proxyManager, this.#holder);
       proxyManager.sender = op;
 

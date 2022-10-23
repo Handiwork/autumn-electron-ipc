@@ -1,14 +1,14 @@
-import ObjectHolder from "./object-holder";
-import PromiseManager from "./promise-manager";
+import { Codec } from "./codec";
+import { ObjectHolder } from "./object-holder";
+import { PromiseManager } from "./promise-manager";
 import type {
   FunctionRequest,
   GPort,
   Message,
   ResolveRequest,
-  SerializedArgs,
   UnmountRequest,
 } from "./protocol";
-import ProxyManager from "./proxy-manager";
+import { ProxyManager } from "./proxy-manager";
 
 export interface Sender {
   callResolve<T>(path: string): Promise<T>;
@@ -31,6 +31,7 @@ export class ObjectPort implements Sender, Receiver {
     public readonly proxyManager: ProxyManager,
     public readonly objectHolder: ObjectHolder
   ) {
+    this.#codec = new Codec(proxyManager, objectHolder);
     port.on("message", this.dispatch.bind(this));
   }
 
@@ -38,6 +39,7 @@ export class ObjectPort implements Sender, Receiver {
    * Proxy manager for this port.
    */
   private promiseManager = new PromiseManager();
+  #codec: Codec;
 
   public callResolve<T>(path: string) {
     return this.promiseManager.createPromise((key) => {
@@ -51,7 +53,7 @@ export class ObjectPort implements Sender, Receiver {
         key,
         type: "function",
         path,
-        args: this.serialize(args),
+        args: this.#codec.serialize(args),
       });
     }) as Promise<T>;
   }
@@ -95,7 +97,7 @@ export class ObjectPort implements Sender, Receiver {
 
     try {
       data = await this.objectHolder.get(msg.path)(
-        ...this.deserialize(msg.args)
+        ...this.#codec.deserialize(msg.args)
       );
     } catch (e) {
       error = e;
@@ -110,63 +112,12 @@ export class ObjectPort implements Sender, Receiver {
   }
 
   performRelease(msg: UnmountRequest) {
-    let data: any;
-    let error: any;
-
-    try {
-      data = this.objectHolder.delete(msg.path);
-    } catch (e) {
-      error = e;
-    } finally {
-      this.port.postMessage({
-        ans: msg.key,
-        type: "unmount-",
-        data,
-        error,
-      });
-    }
-  }
-
-  /**
-   * Make arguments transferable
-   * @param args Raw arguments
-   */
-  serialize(args: any[]): SerializedArgs {
-    const callbacks: any[] = [];
-    const raw: any[] = [];
-    for (let i = 0; i < args.length; ++i) {
-      const arg = args[i];
-      switch (typeof arg) {
-        case "function":
-          callbacks.push({
-            pos: i,
-            key: this.objectHolder.hold(arg),
-          });
-          raw.push(null);
-          break;
-        case "symbol":
-          throw new Error(
-            `Argument [${i}]:${String(
-              arg
-            )} is a symbol that can not be serialized`
-          );
-        default:
-          raw.push(arg);
-      }
-    }
-    return { raw, callbacks };
-  }
-
-  /**
-   * Decode serialized arguments
-   * @param args Serialized Arguments
-   */
-  deserialize(args: SerializedArgs): any[] {
-    const nArgs = args.raw;
-    for (const c of args.callbacks) {
-      nArgs[c.pos] = this.proxyManager.getOrCreate(c.key);
-    }
-    return nArgs;
+    this.port.postMessage({
+      ans: msg.key,
+      type: "unmount-",
+      data: this.objectHolder.delete(msg.path),
+      error: undefined,
+    });
   }
 }
 
