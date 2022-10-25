@@ -8,21 +8,22 @@
       "ESNext",
       "DOM",
     ],
-    "sourceMap": true,
+    "sourceMap": false,
     "rootDir": "src",
-    "moduleResolution": "node",
+    "moduleResolution": "Node16",
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "strictNullChecks": true,
     "downlevelIteration": true,
-    "baseUrl": ".",
-    "outDir": "dist"
+    "outDir": "dist",
+    "resolveJsonModule": true
   },
   "exclude": [
     "node_modules/**/*",
     "test-build/**/*",
     "dist/**/*",
     "api-docs/**/*",
-    "examples/**/*"
+    "examples/**/*",
+    "scripts/**/*"
   ]
 }

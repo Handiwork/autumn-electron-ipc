@@ -1,10 +1,10 @@
 import type { WebContents } from "electron";
 import { ipcMain, MessageChannelMain } from "electron";
-import { ObjectHolder } from "../core/object-holder";
-import { ObjectPort } from "../core/object-port";
-import type { Message } from "../core/protocol";
-import { ProxyManager } from "../core/proxy-manager";
-import type { RemoteProxy } from "../core/remote-proxy";
+import { ObjectHolder } from "./core/object-holder";
+import { ObjectPort } from "./core/object-port";
+import type { Message } from "./core/protocol";
+import { ProxyManager } from "./core/proxy-manager";
+import type { RemoteProxy } from "./core/remote-proxy";
 import { buildChannelName, MAIN_KEY } from "./constants";
 
 export type ConnectListener = (
@@ -36,26 +36,27 @@ export class IPCServer<L, R> {
    */
   listen() {
     ipcMain.on(this.#channelName, (event) => {
-      const sender = event.sender;
-      const { port1: nativePort, port2 } = new MessageChannelMain();
+      const senderWebContents = event.sender;
+      const { port1, port2 } = new MessageChannelMain();
 
       const gport = {
         postMessage(msg: Message): void {
-          nativePort.postMessage(msg);
+          port1.postMessage(msg);
         },
         on(event: "message", listener: (msg: Message) => void): void {
-          nativePort.on(event, (e) => listener(e.data));
+          port1.on("message", (e) => listener(e.data));
         },
       };
       const proxyManager = new ProxyManager(MAIN_KEY);
       const op = new ObjectPort(gport, proxyManager, this.#holder);
       proxyManager.sender = op;
 
-      this.#ports.set(sender, op);
-      sender.postMessage(this.#channelName, null, [port2]);
-      this.#listener?.(sender, op);
-      sender.on("destroyed", () => {
-        this.#ports.delete(sender);
+      this.#ports.set(senderWebContents, op);
+      senderWebContents.postMessage(this.#channelName, null, [port2]);
+      this.#listener?.(senderWebContents, op);
+      senderWebContents.on("destroyed", () => {
+        console.debug(`channel destroy: ${senderWebContents.id}`);
+        this.#ports.delete(senderWebContents);
       });
     });
   }

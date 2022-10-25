@@ -1,9 +1,9 @@
-import type { ObjectHolder } from "../core/object-holder";
-import type { ObjectPort } from "../core/object-port";
-import { createManagedObjectPort } from "../core/object-port";
-import type { GPort } from "../core/protocol";
-import type { ProxyManager } from "../core/proxy-manager";
-import type { RemoteProxy } from "../core/remote-proxy";
+import type { ObjectHolder } from "./core/object-holder";
+import type { ObjectPort } from "./core/object-port";
+import { createManagedObjectPort } from "./core/object-port";
+import type { GPort } from "./core/protocol";
+import type { ProxyManager } from "./core/proxy-manager";
+import type { RemoteProxy } from "./core/remote-proxy";
 import { MAIN_KEY } from "./constants";
 
 /**

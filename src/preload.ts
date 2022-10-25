@@ -1,5 +1,5 @@
 import { ipcRenderer } from "electron";
-import type { GPort, Message } from "../core/protocol";
+import type { GPort, Message } from "./core/protocol";
 import { buildChannelName, MAIN_KEY } from "./constants";
 
 /**
@@ -19,7 +19,7 @@ export function connect(salt = "", timeout = 1000): Promise<GPort> {
           nativePort.postMessage(msg);
         },
         on(event: "message", listener: (msg: Message) => void): void {
-          nativePort.addEventListener("message", (e) => listener(e.data));
+          nativePort.onmessage = (e) => listener(e.data);
         },
       });
     });
