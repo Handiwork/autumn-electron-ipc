@@ -37,6 +37,7 @@ export class IPCServer<L, R> {
   listen() {
     ipcMain.on(this.#channelName, (event) => {
       const senderWebContents = event.sender;
+      console.log(`connect request from webcontents: ${senderWebContents.id}`);
       const { port1, port2 } = new MessageChannelMain();
 
       const gport = {
@@ -45,6 +46,8 @@ export class IPCServer<L, R> {
         },
         on(event: "message", listener: (msg: Message) => void): void {
           port1.on("message", (e) => listener(e.data));
+          // important
+          port1.start();
         },
       };
       const proxyManager = new ProxyManager(MAIN_KEY);
@@ -55,7 +58,7 @@ export class IPCServer<L, R> {
       senderWebContents.postMessage(this.#channelName, null, [port2]);
       this.#listener?.(senderWebContents, op);
       senderWebContents.on("destroyed", () => {
-        console.debug(`channel destroy: ${senderWebContents.id}`);
+        console.log(`channel destroy: ${senderWebContents.id}`);
         this.#ports.delete(senderWebContents);
       });
     });

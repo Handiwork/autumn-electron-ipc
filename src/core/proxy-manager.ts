@@ -10,9 +10,9 @@ function buildPath(base: string, target: string) {
  */
 export class ProxyManager {
   constructor(private mainKey: string) {
-    this.#registry = new FinalizationRegistry((key) =>
-      this.sender.callRelease(key)
-    );
+    this.#registry = new FinalizationRegistry((key) => {
+      if (!key.startsWith(mainKey)) this.sender.callRelease(key);
+    });
   }
   sender: Sender;
 

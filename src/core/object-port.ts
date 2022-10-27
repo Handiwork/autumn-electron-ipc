@@ -32,7 +32,7 @@ export class ObjectPort implements Sender, Receiver {
     public readonly objectHolder: ObjectHolder
   ) {
     this.#codec = new Codec(proxyManager, objectHolder);
-    port.on("message", this.dispatch.bind(this));
+    port.on("message", (msg) => this.dispatch(msg));
   }
 
   /**
@@ -96,9 +96,13 @@ export class ObjectPort implements Sender, Receiver {
     let error: any;
 
     try {
-      data = await this.objectHolder.get(msg.path)(
-        ...this.#codec.deserialize(msg.args)
-      );
+      const lastDot = msg.path.lastIndexOf(".");
+      const _this =
+        lastDot === -1
+          ? undefined
+          : this.objectHolder.get(msg.path.substring(0, lastDot));
+      const fun = this.objectHolder.get(msg.path).bind(_this);
+      data = await fun(...this.#codec.deserialize(msg.args));
     } catch (e) {
       error = e;
     } finally {

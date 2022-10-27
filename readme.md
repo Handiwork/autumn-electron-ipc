@@ -19,49 +19,6 @@ yarn
  yarn add autumn-electron-ipc
  ```
 
-## Basic Use
-
-define API in shared module:
-```typescript
-import { createR2MApiTs } from 'autumn-electron-ipc';
-import { BrowserWindow } from 'electron';
-
-export const mainWindowApi = createR2MApiTs<BrowserWindow>("main-window")
-```
-
-connect to implemtation in main process
-```typescript
-// import from shared module
-import { mainWindowApi } from "../common"; 
-
-//...
-win = new BrowserWindow({...})
-//...
-mainWindowApi.plugInMain(win) // connect to impl
-//...
-
-```
-invoke in preload script, or in renderer script if you enabled node integration
-```typescript
-// import from shared module
-import { mainWindowApi } from "../common"; 
-
-function boostrap(){
-    const mainWindow = mainWindowApi.getClient()
-    setTimeout(async () => {
-        // all tranformed to async call
-        let maximized = await mainWindow.isMaximized() 
-        if (maximized) mainWindow.restore()
-        else mainWindow.maximize()
-    }, 1000);
-}
-```
-
 ## APIs
 
-For use cases like 
-
-- call from main process and reponse in renderer process
-- use this lib in javascript
-
-See -> [HomePage](https://handiwork.github.io/autumn-electron-ipc/)
+See -> [APIs](https://handiwork.github.io/autumn-electron-ipc/api/)

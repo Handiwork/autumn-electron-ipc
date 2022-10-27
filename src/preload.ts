@@ -13,6 +13,7 @@ export function connect(salt = "", timeout = 1000): Promise<GPort> {
   const channelName = buildChannelName(salt);
   return new Promise((resolve, reject) => {
     ipcRenderer.on(channelName, (event) => {
+      console.log("connection established");
       const nativePort = event.ports[0];
       resolve({
         postMessage(msg: Message): void {
