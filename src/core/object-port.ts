@@ -27,8 +27,17 @@ export interface Receiver {
  */
 export class ObjectPort implements Sender, Receiver {
   constructor(
+    /**
+     * Underlying GPort
+     */
     private port: GPort,
+    /**
+     * Related proxy manager
+     */
     public readonly proxyManager: ProxyManager,
+    /**
+     * Related object holder
+     */
     public readonly objectHolder: ObjectHolder
   ) {
     this.#codec = new Codec(proxyManager, objectHolder);

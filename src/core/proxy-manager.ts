@@ -50,6 +50,10 @@ export class ProxyManager {
     return nIns;
   }
 
+  /**
+   * Get default proxy, whose path is {@link mainKey}
+   * @returns Default proxy
+   */
   getDefault() {
     return this.getOrCreate(this.mainKey);
   }

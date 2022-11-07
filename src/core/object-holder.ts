@@ -63,6 +63,10 @@ export class ObjectHolder {
     this.#container = {};
   }
 
+  /**
+   * Set property at default path - {@link mainKey}
+   * @param impl Target Object
+   */
   setDefault(impl: any) {
     this.put(this.mainKey, impl);
   }
