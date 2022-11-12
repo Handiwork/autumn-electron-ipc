@@ -5,7 +5,7 @@ Since `remote` module is going to be deprated (see -> [Deprecate the 'remote' mo
 This lib use typescript interfaces to build IPC, so you can simply import pre-defined interfaces from other packages to work together.  
 
 ## Requirements
--  `electron >= 7.0 `
+-  `electron >= 14 `
 -  `typescript >= 3.7` (not specified as a peerdependency, but required to build with typescript or to get typing suggestions in a javascript project)
 
 ## Install

@@ -8,7 +8,7 @@
       "ESNext",
       "DOM",
     ],
-    "sourceMap": false,
+    "sourceMap": true,
     "rootDir": "src",
     "moduleResolution": "Node16",
     "noImplicitReturns": true,
@@ -24,6 +24,7 @@
     "dist/**/*",
     "api-docs/**/*",
     "examples/**/*",
-    "scripts/**/*"
+    "scripts/**/*",
+    "jest.config.ts"
   ]
 }

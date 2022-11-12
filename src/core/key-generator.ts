@@ -2,22 +2,20 @@ export interface IKeyGenerator<T> {
   next(): T;
 }
 
-const MAX = Number.MAX_SAFE_INTEGER - 1;
-
-export class KeyGenerator {
+export class KeyGenerator implements IKeyGenerator<number> {
   #current = 0;
+  #max = Number.MAX_SAFE_INTEGER - 1;
 
   next() {
-    this.#current = (this.#current + 1) % MAX;
+    this.#current = (this.#current + 1) % this.#max;
     return this.#current;
   }
 }
 
 export class StringKeyGenerotor implements IKeyGenerator<string> {
-  #current = 0;
+  #generator = new KeyGenerator();
 
   next() {
-    this.#current = (this.#current + 1) % MAX;
-    return this.#current.toString();
+    return this.#generator.next().toString();
   }
 }

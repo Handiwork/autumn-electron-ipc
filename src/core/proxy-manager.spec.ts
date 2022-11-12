@@ -72,10 +72,7 @@ describe("created proxies", () => {
       }
       [Symbol.toStringTag]: "FinalizationRegistry";
     }
-    // jest
-    //   .spyOn(global, "FinalizationRegistry", "get")
-    //   .mockImplementation(() => MockFinalizationRegistry);
-    // too hard to mock :(
+    // hard to mock
     global.FinalizationRegistry = MockFinalizationRegistry;
     const testPath = "sample-path";
     const manager = new ProxyManager("IMPL");

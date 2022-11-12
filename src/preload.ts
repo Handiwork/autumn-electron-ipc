@@ -2,7 +2,7 @@ import type { IpcRenderer } from "electron";
 import { buildChannelName, MAIN_KEY } from "./constants";
 import type { GPort, Message } from "./core/protocol";
 
-function createGPort(nativePort: MessagePort) {
+export function createGPort(nativePort: MessagePort) {
   return {
     postMessage(msg: Message): void {
       nativePort.postMessage(msg);
