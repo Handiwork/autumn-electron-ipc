@@ -49,4 +49,5 @@ export type Message = Request | Response;
 export interface GPort {
   postMessage(msg: Message): void;
   on(event: "message", listener: (msg: Message) => void): void;
+  start(): void;
 }

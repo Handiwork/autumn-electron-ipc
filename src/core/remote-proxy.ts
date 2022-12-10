@@ -18,9 +18,9 @@
  *  proxy.d.$f; // Promise<number>
  * ```
  */
-export type RemoteProxy<T> = Resolver<T> &
-  ProxyGetter<T> &
-  RemoteFunctionGetter<T>;
+export type RemoteProxy<T> = RemoteFunctionGetter<T> &
+  Resolver<T> &
+  ProxyGetter<T>;
 
 /**
  * Resolvable properties set as getter.

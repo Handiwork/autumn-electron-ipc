@@ -18,6 +18,7 @@ export class IPCClient<L, R> {
     this.#port = createManagedObjectPort(port, MAIN_KEY);
     this.#proxyManager = this.#port.proxyManager;
     this.#holder = this.#port.objectHolder;
+    port.start();
   }
 
   /**

@@ -6,8 +6,32 @@ class MockMessageChannelMain {
   port1 = ports[0];
   port2 = ports[1];
 }
+
+let destroy: any;
+const mockSender = {
+  id: 1,
+  postMessage: jest.fn(),
+  currentEvent: "",
+  on(event: string, listener: () => void) {
+    this.currentEvent = event;
+    destroy = listener;
+  },
+};
+let connect: any;
+const mockIpcMain = {
+  currentChannelName: undefined as any,
+  on(channel: string, handler: (event: any) => void) {
+    this.currentChannelName = channel;
+    connect = () => {
+      handler({ sender: mockSender });
+    };
+  },
+  send: jest.fn(),
+};
+
 jest.mock("electron", () => ({
   MessageChannelMain: MockMessageChannelMain,
+  ipcMain: mockIpcMain,
 }));
 
 import { IPC_CHANNEL } from "./constants";
@@ -36,34 +60,16 @@ it("createGPort should work", () => {
 
 describe("IPCServer", () => {
   it("IPCServer should accept request correctly", () => {
-    let destroy: any;
-    const mockSender = {
-      postMessage: jest.fn(),
-      on(event: string, listener: () => void) {
-        expect(event).toBe("destroyed");
-        destroy = listener;
-      },
-    };
-    let connect: any;
-    const mockIpcMain = {
-      on(channel: string, handler: (event: any) => void) {
-        expect(channel).toBe(IPC_CHANNEL);
-        connect = () => {
-          handler({ sender: mockSender });
-        };
-      },
-      send: jest.fn(),
-    };
-
     const connectListener = jest.fn();
     const destroyListener = jest.fn();
     const server = new IPCServer();
-    server.onConnect(connectListener);
-    server.onDestroy(destroyListener);
+    server.setOnConnectListener(connectListener);
+    server.setOnDestroyListener(destroyListener);
     server.setImpl({});
-    server.listen(mockIpcMain as any);
+    server.listen();
 
     connect();
+    expect(mockIpcMain.currentChannelName).toBe(IPC_CHANNEL);
     expect(connectListener.mock.calls.length).toBe(1);
 
     expect(server.getProxyOf(mockSender as any)).not.toBeUndefined();
@@ -75,28 +81,9 @@ describe("IPCServer", () => {
   });
 
   it("shold work correctly if no listener specified", () => {
-    let destroy: any;
-    const mockSender = {
-      postMessage: jest.fn(),
-      on(event: string, listener: () => void) {
-        expect(event).toBe("destroyed");
-        destroy = listener;
-      },
-    };
-    let connect: any;
-    const mockIpcMain = {
-      on(channel: string, handler: (event: any) => void) {
-        expect(channel).toBe(IPC_CHANNEL);
-        connect = () => {
-          handler({ sender: mockSender });
-        };
-      },
-      send: jest.fn(),
-    };
-
     const server = new IPCServer();
     server.setImpl({});
-    server.listen(mockIpcMain as any);
+    server.listen();
 
     connect();
 
@@ -104,6 +91,7 @@ describe("IPCServer", () => {
 
     destroy();
 
+    expect(mockSender.currentEvent).toBe("destroyed");
     expect(server.getProxyOf(mockSender as any)).toBeUndefined();
   });
 });
