@@ -2,7 +2,7 @@
   "compilerOptions": {
     "experimentalDecorators": true,
     "esModuleInterop": true,
-    "module": "ES2020",
+    "module": "Node16",
     "target": "ES2015",
     "lib": [
       "ESNext",

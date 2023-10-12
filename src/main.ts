@@ -94,6 +94,17 @@ export class IPCServer<L, R> {
     return this.#ports.get(target.id)?.proxyManager?.getDefault();
   }
 
+  /**
+   * Run block for every connected client.
+   * @param block Running block
+   * @returns Results
+   */
+  broadcast<T>(block: (proxy: RemoteProxy<R>) => T) {
+    return Array.from(this.#ports.values())
+      .map((it) => it.proxyManager.getDefault())
+      .map(block);
+  }
+
   setImpl(impl: L) {
     this.#holder.setDefault(impl);
   }
