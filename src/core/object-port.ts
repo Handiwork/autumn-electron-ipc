@@ -38,7 +38,7 @@ export class ObjectPort implements Sender, Receiver {
     /**
      * Related object holder
      */
-    public readonly objectHolder: ObjectHolder
+    public readonly objectHolder: ObjectHolder,
   ) {
     this.#codec = new Codec(proxyManager, objectHolder);
     port.on("message", (msg) => this.dispatch(msg));
@@ -88,6 +88,9 @@ export class ObjectPort implements Sender, Receiver {
       case "resolve-":
       case "unmount-":
         this.promiseManager.completePromise(msg.ans, msg.error, msg.data);
+        break;
+      default:
+        break;
     }
   };
 

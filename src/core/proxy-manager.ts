@@ -21,9 +21,8 @@ export class ProxyManager {
       get: (target, p: string) => {
         if (p.charAt(0) === "$") {
           return this.sender.callResolve(buildPath(path, p.slice(1)));
-        } else {
-          return this.getOrCreate(buildPath(path, p));
         }
+        return this.getOrCreate(buildPath(path, p));
       },
       apply: (target, thisArg, args: any[]) => {
         return this.sender.callFunction(path, args);

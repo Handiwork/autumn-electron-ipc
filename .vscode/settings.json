@@ -13,6 +13,7 @@
     "typescript",
     "html",
   ],
+  "eslint.format.enable": true,
   "jest.autoRun": {
     "jest.autoRun": false,
     "onSave": "test-only"

@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 export interface IKeyGenerator<T> {
   next(): T;
 }

@@ -33,6 +33,6 @@ export function connect(salt = "", timeout = 1000): Promise<GPort> {
       resolve(createGPort(nativePort));
     });
     ipcRenderer.send(channelName, MAIN_KEY);
-    setTimeout(() => reject("timeout"), timeout);
+    setTimeout(() => reject(Error("timeout")), timeout);
   });
 }

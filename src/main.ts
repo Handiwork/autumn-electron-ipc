@@ -9,7 +9,7 @@ import type { RemoteProxy } from "./core/remote-proxy";
 
 export type ChangeListener = (
   webContents: WebContents,
-  port: ObjectPort
+  port: ObjectPort,
 ) => void;
 
 /**

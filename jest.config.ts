@@ -1,4 +1,3 @@
-/* eslint-disable jest/no-jest-import */
 import type { Config } from "jest";
 
 const config: Config = {

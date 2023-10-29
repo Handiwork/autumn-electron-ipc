@@ -3,7 +3,7 @@ import { readFile, writeFile, copyFile } from "fs/promises";
 
 async function writePackageInfo() {
   const packageInfo = JSON.parse(
-    await readFile("./package.json", { encoding: "utf-8" })
+    await readFile("./package.json", { encoding: "utf-8" }),
   );
   const {
     name,
@@ -75,14 +75,14 @@ async function writePackageInfo() {
     `export * from "./types/preload";`,
     {
       encoding: "utf-8",
-    }
+    },
   );
   await writeFile(
     `dist/${rendererDtsName}`,
     `export * from "./types/renderer";`,
     {
       encoding: "utf-8",
-    }
+    },
   );
   await copyFile("readme.md", "dist/readme.md");
 }

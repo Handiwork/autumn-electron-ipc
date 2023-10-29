@@ -32,7 +32,7 @@ it("shoule reject  promise when calling completePromise with err", async () => {
 it("should no-op if trying to complete no-existing promise", () => {
   const manager = new PromiseManager();
   expect(() => manager.completePromise(-1, "unhandled", undefined)).not.toThrow(
-    "unhandled"
+    "unhandled",
   );
 });
 

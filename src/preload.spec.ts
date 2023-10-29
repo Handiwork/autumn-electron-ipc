@@ -40,6 +40,7 @@ it("createGPort should work", () => {
   function callback(message: Message) {
     result = message;
   }
+
   gport.on("message", callback);
   mockPort.onmessage({ data: msg });
   expect(result).toBe(msg);
@@ -55,5 +56,5 @@ it("connect should work if receive remote port", async () => {
 it("should throw if timeout", async () => {
   const pGPort = connect();
   setTimeout(response, 1100);
-  await expect(pGPort).rejects.toBe("timeout");
+  await expect(pGPort).rejects.toThrowError("timeout");
 });

@@ -16,15 +16,15 @@ describe("created proxies", () => {
         return null as any;
       },
       async callFunction() {
-        throw "Unimplemented";
+        throw Error("Unimplemented");
       },
       async callRelease() {
-        throw "Unimplemented";
+        throw Error("Unimplemented");
       },
     };
 
     const proxy = manager.getOrCreate("");
-    proxy["$" + testPath];
+    expect(proxy["$" + testPath]).resolves.toBeNull();
   });
 
   it("created proxies should call sender's callFunction", () => {
@@ -32,14 +32,14 @@ describe("created proxies", () => {
     const manager = new ProxyManager("IMPL");
     manager.sender = {
       async callResolve() {
-        throw "Unimplemented";
+        throw Error("Unimplemented");
       },
       async callFunction(path) {
         expect(path).toBe(testPath);
         return null as any;
       },
       async callRelease() {
-        throw "Unimplemented";
+        throw Error("Unimplemented");
       },
     };
 
@@ -63,7 +63,7 @@ describe("created proxies", () => {
       register(
         target: object,
         heldValue: T,
-        unregisterToken?: object | undefined
+        unregisterToken?: object | undefined,
       ): void {
         this.map.set(unregisterToken ?? heldValue, { target, heldValue });
       }
@@ -72,16 +72,17 @@ describe("created proxies", () => {
       }
       [Symbol.toStringTag]: "FinalizationRegistry";
     }
+
     // hard to mock
     global.FinalizationRegistry = MockFinalizationRegistry;
     const testPath = "sample-path";
     const manager = new ProxyManager("IMPL");
     manager.sender = {
       async callResolve() {
-        throw "Unimplemented";
+        throw Error("Unimplemented");
       },
       async callFunction() {
-        throw "Unimplemented";
+        throw Error("Unimplemented");
       },
       async callRelease(path) {
         expect(path).toBe(testPath);
@@ -93,7 +94,7 @@ describe("created proxies", () => {
     gc();
   });
 
-  it("proxy should be able to generate sub proxy", () => {
+  it("proxy should be able to generate sub proxy", async () => {
     const testPath = "to.sample.path";
     const manager = new ProxyManager("IMPL");
     manager.sender = {
@@ -102,14 +103,14 @@ describe("created proxies", () => {
         return null as any;
       },
       async callFunction() {
-        throw "Unimplemented";
+        throw Error("Unimplemented");
       },
       async callRelease() {
-        throw "Unimplemented";
+        throw Error("Unimplemented");
       },
     };
     const root: any = manager.getOrCreate("");
-    root.to.some.path;
+    await expect(root.to.some.path).rejects.toThrowError("Unimplemented");
   });
 
   it("cache should work", () => {

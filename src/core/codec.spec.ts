@@ -18,9 +18,11 @@ describe("serialize", () => {
     function f1() {
       return true;
     }
+
     function f2() {
       return 1;
     }
+
     const args = [f1, f2];
     const serialized = codec.serialize(args);
     expect(serialized.callbacks).toEqual([

@@ -65,7 +65,7 @@ describe("ObjectPort function call", () => {
     const impl = { hello: () => "hello" };
     op2.objectHolder.setDefault(impl);
     await expect(op1.proxyManager.getDefault().be()).rejects.toThrowError(
-      Error
+      Error,
     );
   });
 

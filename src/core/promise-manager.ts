@@ -11,7 +11,7 @@ export type TPromise = {
  */
 export class PromiseManager {
   constructor(
-    private keyGenerator: IKeyGenerator<number> = new KeyGenerator()
+    private keyGenerator: IKeyGenerator<number> = new KeyGenerator(),
   ) {}
 
   private pendingPromises = new Map<number, TPromise>();
@@ -34,7 +34,7 @@ export class PromiseManager {
 
   rejectAll() {
     Array.from(this.pendingPromises.keys()).forEach((k) =>
-      this.completePromise(k, "abandoned", undefined)
+      this.completePromise(k, "abandoned", undefined),
     );
   }
 }

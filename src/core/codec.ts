@@ -5,7 +5,7 @@ import type { ProxyManager } from "./proxy-manager";
 export class Codec {
   constructor(
     private proxyManager: ProxyManager,
-    private objectHolder: ObjectHolder
+    private objectHolder: ObjectHolder,
   ) {}
 
   /**
@@ -28,8 +28,8 @@ export class Codec {
         case "symbol":
           throw new Error(
             `Argument [${i}]:${String(
-              arg
-            )} is a symbol that can not be serialized`
+              arg,
+            )} is a symbol that can not be serialized`,
           );
         default:
           raw.push(arg);

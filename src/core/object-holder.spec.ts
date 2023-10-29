@@ -7,7 +7,7 @@ beforeEach(() => {
 });
 
 it("should return original object when get with generated key", () => {
-  const obj = new String("hello");
+  const obj = String("hello");
   const key = map.hold(obj);
   expect(map.get(key)).toBe(obj);
 });
@@ -28,10 +28,10 @@ it("delete should always return true in any conditions", () => {
 });
 
 it("sample process should works", () => {
-  const obj = new String("obj");
+  const obj = String("obj");
   const key = map.hold(obj);
   expect(map.get(key)).toBe(obj);
-  const obj2 = new String("obj2");
+  const obj2 = String("obj2");
   map.put(key, obj2);
   expect(map.get(key)).toBe(obj2);
   expect(map.delete(key)).toBe(true);

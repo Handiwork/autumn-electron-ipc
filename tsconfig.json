@@ -2,7 +2,7 @@
   "compilerOptions": {
     "experimentalDecorators": true,
     "esModuleInterop": true,
-    "module": "Node16",
+    "module": "ESNext",
     "target": "ES2015",
     "lib": [
       "ESNext",
@@ -10,7 +10,7 @@
     ],
     "sourceMap": true,
     "rootDir": "src",
-    "moduleResolution": "Node16",
+    "moduleResolution": "Bundler",
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "strictNullChecks": true,
